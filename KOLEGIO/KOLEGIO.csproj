@@ -1,0 +1,1052 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7CE741D6-03DA-4360-B1B0-82738A40B061}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KOLEGIO</RootNamespace>
+    <AssemblyName>KOLEGIO</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Oxygen-Icons.org-Oxygen-Categories-applications-education-university.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Excel.4.5">
+      <HintPath>..\..\..\..\_SASEG\dlls\Excel.4.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="NetBarControl">
+      <HintPath>..\NetBarControl.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Clases\Constantes.cs" />
+    <Compile Include="Clases\controlerBD.cs" />
+    <Compile Include="Clases\DataGridViewUtilidades.cs" />
+    <Compile Include="Clases\FuncsInternas.cs" />
+    <Compile Include="Clases\Globales.cs" />
+    <Compile Include="Clases\Mail.cs" />
+    <Compile Include="Clases\PerfilHacienda.cs" />
+    <Compile Include="Edicion\frmCursosColegiadosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCursosColegiadosEdicion.Designer.cs">
+      <DependentUpon>frmCursosColegiadosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCursosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCursosEdicion.Designer.cs">
+      <DependentUpon>frmCursosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmActividadesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmActividadesEdicion.Designer.cs">
+      <DependentUpon>frmActividadesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmBeneficiariosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmBeneficiariosEdicion.Designer.cs">
+      <DependentUpon>frmBeneficiariosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCambioClave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCambioClave.Designer.cs">
+      <DependentUpon>frmCambioClave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCarrerasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCarrerasEdicion.Designer.cs">
+      <DependentUpon>frmCarrerasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCamposInvestigacionEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCamposInvestigacionEdicion.Designer.cs">
+      <DependentUpon>frmCamposInvestigacionEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCamposAccionEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCamposAccionEdicion.Designer.cs">
+      <DependentUpon>frmCamposAccionEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmConsultorasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmConsultorasEdicion.Designer.cs">
+      <DependentUpon>frmConsultorasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmControlVersionesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmControlVersionesEdicion.Designer.cs">
+      <DependentUpon>frmControlVersionesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmRegCursos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmRegCursos.Designer.cs">
+      <DependentUpon>frmRegCursos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmRegistroActividadesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmRegistroActividadesEdicion.Designer.cs">
+      <DependentUpon>frmRegistroActividadesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmVidaSilvestreEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmVidaSilvestreEdicion.Designer.cs">
+      <DependentUpon>frmVidaSilvestreEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmTiposEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmTiposEdicion.Designer.cs">
+      <DependentUpon>frmTiposEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmInvestigacionPlaguicidasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmInvestigacionPlaguicidasEdicion.Designer.cs">
+      <DependentUpon>frmInvestigacionPlaguicidasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroActividades.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroActividades.Designer.cs">
+      <DependentUpon>frmFiltroActividades.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroBitacora.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroBitacora.Designer.cs">
+      <DependentUpon>frmFiltroBitacora.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroInformeReg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroInformeReg.Designer.cs">
+      <DependentUpon>frmFiltroInformeReg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroPeritos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroPeritos.Designer.cs">
+      <DependentUpon>frmFiltroPeritos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroPlaguicidas_Aerea.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroPlaguicidas_Aerea.Designer.cs">
+      <DependentUpon>frmFiltroPlaguicidas_Aerea.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroIndividual.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroIndividual.Designer.cs">
+      <DependentUpon>frmFiltroIndividual.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroIndividualReg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroIndividualReg.Designer.cs">
+      <DependentUpon>frmFiltroIndividualReg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroEstables_Consul.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroEstables_Consul.Designer.cs">
+      <DependentUpon>frmFiltroEstables_Consul.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroColegiado.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroColegiado.Designer.cs">
+      <DependentUpon>frmFiltroColegiado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroRegentes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Filtros\frmFiltroRegentes.Designer.cs">
+      <DependentUpon>frmFiltroRegentes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCursosColegiadosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCursosColegiadosList.Designer.cs">
+      <DependentUpon>FrmCursosColegiadosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCursosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCursosList.Designer.cs">
+      <DependentUpon>FrmCursosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmActividadesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmActividadesList.Designer.cs">
+      <DependentUpon>FrmActividadesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmControlVersionesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmControlVersionesList.Designer.cs">
+      <DependentUpon>FrmControlVersionesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmVidaSilvestreList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmVidaSilvestreList.Designer.cs">
+      <DependentUpon>FrmVidaSilvestreList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmTiposList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmTiposList.Designer.cs">
+      <DependentUpon>FrmTiposList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmListConsultoras.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmListConsultoras.Designer.cs">
+      <DependentUpon>frmListConsultoras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCambioCategoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCambioCategoria.Designer.cs">
+      <DependentUpon>frmCambioCategoria.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCambioUltimoCobro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCambioUltimoCobro.Designer.cs">
+      <DependentUpon>frmCambioUltimoCobro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosColegiadosNuevo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosColegiadosNuevo.Designer.cs">
+      <DependentUpon>frmCobrosColegiadosNuevo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosRegenciasNuevo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosRegenciasNuevo.Designer.cs">
+      <DependentUpon>frmCobrosRegenciasNuevo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarCelNotificacionPorMes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarCelNotificacionPorMes.Designer.cs">
+      <DependentUpon>frmGenerarCelNotificacionPorMes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCambioCondicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCambioCondicion.Designer.cs">
+      <DependentUpon>frmCambioCondicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosCanonesAnuales.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosCanonesAnuales.Designer.cs">
+      <DependentUpon>frmCobrosCanonesAnuales.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosRegencias.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosRegencias.Designer.cs">
+      <DependentUpon>frmCobrosRegencias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarCobroMasivoCobrador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarCobroMasivoCobrador.Designer.cs">
+      <DependentUpon>frmGenerarCobroMasivoCobrador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarPlantillasCobro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmGenerarPlantillasCobro.Designer.cs">
+      <DependentUpon>frmGenerarPlantillasCobro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosColegiados.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmCobrosColegiados.Designer.cs">
+      <DependentUpon>frmCobrosColegiados.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmMachotesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmMachotesEdicion.Designer.cs">
+      <DependentUpon>frmMachotesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmFrecuenciasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmFrecuenciasEdicion.Designer.cs">
+      <DependentUpon>frmFrecuenciasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmFormasPagoEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmFormasPagoEdicion.Designer.cs">
+      <DependentUpon>frmFormasPagoEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmPeritosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmPeritosEdicion.Designer.cs">
+      <DependentUpon>frmPeritosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmPlantillasCobradoresEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmPlantillasCobradoresEdicion.Designer.cs">
+      <DependentUpon>frmPlantillasCobradoresEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmRegentesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmRegentesEdicion.Designer.cs">
+      <DependentUpon>frmRegentesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmZonasCobroEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmZonasCobroEdicion.Designer.cs">
+      <DependentUpon>frmZonasCobroEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmEspecialidadesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmEspecialidadesEdicion.Designer.cs">
+      <DependentUpon>frmEspecialidadesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmOrientacionesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmOrientacionesEdicion.Designer.cs">
+      <DependentUpon>frmOrientacionesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCamposEspecialidadEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCamposEspecialidadEdicion.Designer.cs">
+      <DependentUpon>frmCamposEspecialidadEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCultivosRecetasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCultivosRecetasEdicion.Designer.cs">
+      <DependentUpon>frmCultivosRecetasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmGradosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmGradosEdicion.Designer.cs">
+      <DependentUpon>frmGradosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCondicionesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCondicionesEdicion.Designer.cs">
+      <DependentUpon>frmCondicionesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCategoriasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCategoriasEdicion.Designer.cs">
+      <DependentUpon>frmCategoriasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmEmpresasEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmEmpresasEdicion.Designer.cs">
+      <DependentUpon>frmEmpresasEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmColegiadosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmColegiadosEdicion.Designer.cs">
+      <DependentUpon>frmColegiadosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmDesgloseColegiatura.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmDesgloseColegiatura.Designer.cs">
+      <DependentUpon>frmDesgloseColegiatura.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmEstablecimientosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmEstablecimientosEdicion.Designer.cs">
+      <DependentUpon>frmEstablecimientosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmPaisesEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmPaisesEdicion.Designer.cs">
+      <DependentUpon>frmPaisesEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmCentrosAcademicosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmCentrosAcademicosEdicion.Designer.cs">
+      <DependentUpon>frmCentrosAcademicosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmPuestosTrabajoEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmPuestosTrabajoEdicion.Designer.cs">
+      <DependentUpon>frmPuestosTrabajoEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmEstadosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmEstadosEdicion.Designer.cs">
+      <DependentUpon>frmEstadosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edicion\frmUsuariosEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmUsuariosEdicion.Designer.cs">
+      <DependentUpon>frmUsuariosEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FIngreso.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FIngreso.designer.cs">
+      <DependentUpon>FIngreso.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmConfig.Designer.cs">
+      <DependentUpon>frmConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmGlobales.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmGlobales.Designer.cs">
+      <DependentUpon>frmGlobales.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMenu.Designer.cs">
+      <DependentUpon>frmMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCarrerasList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCarrerasList.Designer.cs">
+      <DependentUpon>FrmCarrerasList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCamposAccionList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCamposAccionList.Designer.cs">
+      <DependentUpon>FrmCamposAccionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCamposInvestigacionList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCamposInvestigacionList.Designer.cs">
+      <DependentUpon>FrmCamposInvestigacionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmMachotesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmMachotesList.Designer.cs">
+      <DependentUpon>FrmMachotesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmFrecuenciasList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmFrecuenciasList.Designer.cs">
+      <DependentUpon>FrmFrecuenciasList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmFormasPagoList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmFormasPagoList.Designer.cs">
+      <DependentUpon>FrmFormasPagoList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmPeritosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmPeritosList.Designer.cs">
+      <DependentUpon>frmPeritosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmPlantillaCobradoresList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmPlantillaCobradoresList.Designer.cs">
+      <DependentUpon>frmPlantillaCobradoresList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmRegentesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmRegentesList.Designer.cs">
+      <DependentUpon>frmRegentesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmZonasCobroList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmZonasCobroList.Designer.cs">
+      <DependentUpon>FrmZonasCobroList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmOrientacionesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmOrientacionesList.Designer.cs">
+      <DependentUpon>FrmOrientacionesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmEspecialidadesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmEspecialidadesList.Designer.cs">
+      <DependentUpon>FrmEspecialidadesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCamposEspecialidadList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCamposEspecialidadList.Designer.cs">
+      <DependentUpon>FrmCamposEspecialidadList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCultivosRecetasList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCultivosRecetasList.Designer.cs">
+      <DependentUpon>FrmCultivosRecetasList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCondicionesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCondicionesList.Designer.cs">
+      <DependentUpon>FrmCondicionesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmGradosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmGradosList.Designer.cs">
+      <DependentUpon>FrmGradosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCategoriasList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCategoriasList.Designer.cs">
+      <DependentUpon>FrmCategoriasList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmEmpresasList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmEmpresasList.Designer.cs">
+      <DependentUpon>FrmEmpresasList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmPaisesList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmPaisesList.Designer.cs">
+      <DependentUpon>FrmPaisesList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmCentrosAcademicosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmCentrosAcademicosList.Designer.cs">
+      <DependentUpon>FrmCentrosAcademicosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmPuestosTrabajoList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmPuestosTrabajoList.Designer.cs">
+      <DependentUpon>FrmPuestosTrabajoList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\FrmEstadosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\FrmEstadosList.Designer.cs">
+      <DependentUpon>FrmEstadosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmListColegiados.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmListColegiados.Designer.cs">
+      <DependentUpon>frmListColegiados.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmListDesgloseColegiatura.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmListDesgloseColegiatura.Designer.cs">
+      <DependentUpon>frmListDesgloseColegiatura.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmListEstablecimientos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmListEstablecimientos.Designer.cs">
+      <DependentUpon>frmListEstablecimientos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Listados\frmUsuariosList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Listados\frmUsuariosList.Designer.cs">
+      <DependentUpon>frmUsuariosList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmLevantamientoCondicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmLevantamientoCondicion.Designer.cs">
+      <DependentUpon>frmLevantamientoCondicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantadosRegenciaNuevo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantadosRegenciaNuevo.Designer.cs">
+      <DependentUpon>frmPagosAdelantadosRegenciaNuevo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantadosRegencia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantadosRegencia.Designer.cs">
+      <DependentUpon>frmPagosAdelantadosRegencia.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantados.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Procesos\frmPagosAdelantados.Designer.cs">
+      <DependentUpon>frmPagosAdelantados.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web References\cr.fi.bccr.indicadoreseconomicos\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Edicion\frmCursosColegiadosEdicion.resx">
+      <DependentUpon>frmCursosColegiadosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCursosEdicion.resx">
+      <DependentUpon>frmCursosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmActividadesEdicion.resx">
+      <DependentUpon>frmActividadesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmBeneficiariosEdicion.resx">
+      <DependentUpon>frmBeneficiariosEdicion.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCambioClave.resx">
+      <DependentUpon>frmCambioClave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCarrerasEdicion.resx">
+      <DependentUpon>frmCarrerasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCamposInvestigacionEdicion.resx">
+      <DependentUpon>frmCamposInvestigacionEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCamposAccionEdicion.resx">
+      <DependentUpon>frmCamposAccionEdicion.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmConsultorasEdicion.resx">
+      <DependentUpon>frmConsultorasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmControlVersionesEdicion.resx">
+      <DependentUpon>frmControlVersionesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmRegistroActividadesEdicion.resx">
+      <DependentUpon>frmRegistroActividadesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmVidaSilvestreEdicion.resx">
+      <DependentUpon>frmVidaSilvestreEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmTiposEdicion.resx">
+      <DependentUpon>frmTiposEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmInvestigacionPlaguicidasEdicion.resx">
+      <DependentUpon>frmInvestigacionPlaguicidasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroActividades.resx">
+      <DependentUpon>frmFiltroActividades.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroBitacora.resx">
+      <DependentUpon>frmFiltroBitacora.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroInformeReg.resx">
+      <DependentUpon>frmFiltroInformeReg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroPeritos.resx">
+      <DependentUpon>frmFiltroPeritos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroPlaguicidas_Aerea.resx">
+      <DependentUpon>frmFiltroPlaguicidas_Aerea.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroIndividual.resx">
+      <DependentUpon>frmFiltroIndividual.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroIndividualReg.resx">
+      <DependentUpon>frmFiltroIndividualReg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroEstables_Consul.resx">
+      <DependentUpon>frmFiltroEstables_Consul.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroColegiado.resx">
+      <DependentUpon>frmFiltroColegiado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filtros\frmFiltroRegentes.resx">
+      <DependentUpon>frmFiltroRegentes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmControlVersionesList.resx">
+      <DependentUpon>FrmControlVersionesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmVidaSilvestreList.resx">
+      <DependentUpon>FrmVidaSilvestreList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmTiposList.resx">
+      <DependentUpon>FrmTiposList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCambioCategoria.resx">
+      <DependentUpon>frmCambioCategoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCambioUltimoCobro.resx">
+      <DependentUpon>frmCambioUltimoCobro.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCobrosColegiadosNuevo.resx">
+      <DependentUpon>frmCobrosColegiadosNuevo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCobrosRegenciasNuevo.resx">
+      <DependentUpon>frmCobrosRegenciasNuevo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmGenerarCelNotificacionPorMes.resx">
+      <DependentUpon>frmGenerarCelNotificacionPorMes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCambioCondicion.resx">
+      <DependentUpon>frmCambioCondicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCobrosCanonesAnuales.resx">
+      <DependentUpon>frmCobrosCanonesAnuales.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCobrosRegencias.resx">
+      <DependentUpon>frmCobrosRegencias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmGenerarCobroMasivoCobrador.resx">
+      <DependentUpon>frmGenerarCobroMasivoCobrador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmGenerarPlantillasCobro.resx">
+      <DependentUpon>frmGenerarPlantillasCobro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmCobrosColegiados.resx">
+      <DependentUpon>frmCobrosColegiados.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmMachotesEdicion.resx">
+      <DependentUpon>frmMachotesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmFrecuenciasEdicion.resx">
+      <DependentUpon>frmFrecuenciasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmFormasPagoEdicion.resx">
+      <DependentUpon>frmFormasPagoEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmPeritosEdicion.resx">
+      <DependentUpon>frmPeritosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmPlantillasCobradoresEdicion.resx">
+      <DependentUpon>frmPlantillasCobradoresEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmRegentesEdicion.resx">
+      <DependentUpon>frmRegentesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmZonasCobroEdicion.resx">
+      <DependentUpon>frmZonasCobroEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmEspecialidadesEdicion.resx">
+      <DependentUpon>frmEspecialidadesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmOrientacionesEdicion.resx">
+      <DependentUpon>frmOrientacionesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCamposEspecialidadEdicion.resx">
+      <DependentUpon>frmCamposEspecialidadEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCultivosRecetasEdicion.resx">
+      <DependentUpon>frmCultivosRecetasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmGradosEdicion.resx">
+      <DependentUpon>frmGradosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCondicionesEdicion.resx">
+      <DependentUpon>frmCondicionesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCategoriasEdicion.resx">
+      <DependentUpon>frmCategoriasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmEmpresasEdicion.resx">
+      <DependentUpon>frmEmpresasEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmColegiadosEdicion.resx">
+      <DependentUpon>frmColegiadosEdicion.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmDesgloseColegiatura.resx">
+      <DependentUpon>frmDesgloseColegiatura.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmEstablecimientosEdicion.resx">
+      <DependentUpon>frmEstablecimientosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmPaisesEdicion.resx">
+      <DependentUpon>frmPaisesEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmCentrosAcademicosEdicion.resx">
+      <DependentUpon>frmCentrosAcademicosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmPuestosTrabajoEdicion.resx">
+      <DependentUpon>frmPuestosTrabajoEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmEstadosEdicion.resx">
+      <DependentUpon>frmEstadosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmUsuariosEdicion.resx">
+      <DependentUpon>frmUsuariosEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FIngreso.resx">
+      <DependentUpon>FIngreso.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmConfig.resx">
+      <DependentUpon>frmConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmGlobales.resx">
+      <DependentUpon>frmGlobales.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMenu.resx">
+      <DependentUpon>frmMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCarrerasList.resx">
+      <DependentUpon>FrmCarrerasList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCamposAccionList.resx">
+      <DependentUpon>FrmCamposAccionList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCamposInvestigacionList.resx">
+      <DependentUpon>FrmCamposInvestigacionList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmMachotesList.resx">
+      <DependentUpon>FrmMachotesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmFrecuenciasList.resx">
+      <DependentUpon>FrmFrecuenciasList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmFormasPagoList.resx">
+      <DependentUpon>FrmFormasPagoList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmZonasCobroList.resx">
+      <DependentUpon>FrmZonasCobroList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmOrientacionesList.resx">
+      <DependentUpon>FrmOrientacionesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmEspecialidadesList.resx">
+      <DependentUpon>FrmEspecialidadesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCamposEspecialidadList.resx">
+      <DependentUpon>FrmCamposEspecialidadList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCultivosRecetasList.resx">
+      <DependentUpon>FrmCultivosRecetasList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCondicionesList.resx">
+      <DependentUpon>FrmCondicionesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmGradosList.resx">
+      <DependentUpon>FrmGradosList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCategoriasList.resx">
+      <DependentUpon>FrmCategoriasList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmEmpresasList.resx">
+      <DependentUpon>FrmEmpresasList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmPaisesList.resx">
+      <DependentUpon>FrmPaisesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmCentrosAcademicosList.resx">
+      <DependentUpon>FrmCentrosAcademicosList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmPuestosTrabajoList.resx">
+      <DependentUpon>FrmPuestosTrabajoList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\FrmEstadosList.resx">
+      <DependentUpon>FrmEstadosList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\frmListColegiados.resx">
+      <DependentUpon>frmListColegiados.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\frmListDesgloseColegiatura.resx">
+      <DependentUpon>frmListDesgloseColegiatura.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\frmListEstablecimientos.resx">
+      <DependentUpon>frmListEstablecimientos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listados\frmUsuariosList.resx">
+      <DependentUpon>frmUsuariosList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmLevantamientoCondicion.resx">
+      <DependentUpon>frmLevantamientoCondicion.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmPagosAdelantadosRegenciaNuevo.resx">
+      <DependentUpon>frmPagosAdelantadosRegenciaNuevo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmPagosAdelantadosRegencia.resx">
+      <DependentUpon>frmPagosAdelantadosRegencia.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Procesos\frmPagosAdelantados.resx">
+      <DependentUpon>frmPagosAdelantados.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Web References\cr.fi.bccr.indicadoreseconomicos\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\cr.fi.bccr.indicadoreseconomicos\wsIndicadoresEconomicos.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Oxygen-Icons.org-Oxygen-Categories-applications-education-university.ico" />
+    <None Include="Resources\Test-paper-icon.png" />
+    <None Include="Resources\lessons-icon.png" />
+    <None Include="Resources\Actions-view-process-own-icon.png" />
+    <None Include="Resources\office-building-icon.png" />
+    <None Include="Resources\Transfer-Document-icon.png" />
+    <None Include="Resources\btnCobroRegencias.bmp" />
+    <None Include="Resources\default1.jpg" />
+    <None Include="Resources\default.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx%3fWSDL">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\cr.fi.bccr.indicadoreseconomicos\</RelPath>
+      <UpdateFromURL>http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx%3fWSDL</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Novum_cr_fi_bccr_indicadoreseconomicos_wsIndicadoresEconomicos</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Framework\Framework.csproj">
+      <Project>{f645c62b-361d-4c56-8505-597fd79af9c0}</Project>
+      <Name>Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\ObjectListView\ObjectListView2012.csproj">
+      <Project>{18feda0c-d147-4286-b39a-01204808106a}</Project>
+      <Name>ObjectListView2012</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F645C62B-361D-4C56-8505-597FD79AF9C0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Framework</RootNamespace>
+    <AssemblyName>Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="ECL">
+      <HintPath>..\..\Pinmsa_QuickBase\ECL.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ObjectListView, Version=2.9.1.28933, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ObjectListView\bin\Debug\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Clases\Conexion.cs" />
+    <Compile Include="Clases\ConexionNUBE.cs" />
+    <Compile Include="Clases\ConsultasNUBE.cs" />
+    <Compile Include="Clases\Eventos.cs" />
+    <Compile Include="Clases\ManejoEventos.cs" />
+    <Compile Include="Clases\Consultas.cs" />
+    <Compile Include="Clases\Utilitario.cs" />
+    <Compile Include="frmAdjunto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAdjunto.Designer.cs">
+      <DependentUpon>frmAdjunto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCargas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCargas.Designer.cs">
+      <DependentUpon>frmCargas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEdicion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEdicion.Designer.cs">
+      <DependentUpon>frmEdicion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmF1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmF1.Designer.cs">
+      <DependentUpon>frmF1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmFiltro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFiltro.Designer.cs">
+      <DependentUpon>frmFiltro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmListado.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmListado.Designer.cs">
+      <DependentUpon>frmListado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmListadoB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmListadoB.Designer.cs">
+      <DependentUpon>frmListadoB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPrincipal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPrincipal.Designer.cs">
+      <DependentUpon>frmPrincipal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPrueba.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPrueba.Designer.cs">
+      <DependentUpon>frmPrueba.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPrueba1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPrueba1.Designer.cs">
+      <DependentUpon>frmPrueba1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Clases\Listado.cs" />
+    <Compile Include="frmVisorRpt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmVisorRpt.designer.cs">
+      <DependentUpon>frmVisorRpt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControls\chkSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\chkSaseg.Designer.cs">
+      <DependentUpon>chkSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\clbSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\clbSaseg.Designer.cs">
+      <DependentUpon>clbSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\cmbSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\cmbSaseg.Designer.cs">
+      <DependentUpon>cmbSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\dtpSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\dtpSaseg.Designer.cs">
+      <DependentUpon>dtpSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\rbSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\rbSaseg.Designer.cs">
+      <DependentUpon>rbSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\rtbSaseg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\rtbSaseg.Designer.cs">
+      <DependentUpon>rtbSaseg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\txtNormal.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\txtNormal.Designer.cs">
+      <DependentUpon>txtNormal.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="frmAdjunto.resx">
+      <DependentUpon>frmAdjunto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCargas.resx">
+      <DependentUpon>frmCargas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEdicion.resx">
+      <DependentUpon>frmEdicion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmF1.resx">
+      <DependentUpon>frmF1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFiltro.resx">
+      <DependentUpon>frmFiltro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmListado.resx">
+      <DependentUpon>frmListado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmListadoB.resx">
+      <DependentUpon>frmListadoB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPrincipal.resx">
+      <DependentUpon>frmPrincipal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPrueba.resx">
+      <DependentUpon>frmPrueba.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPrueba1.resx">
+      <DependentUpon>frmPrueba1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmVisorRpt.resx">
+      <DependentUpon>frmVisorRpt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UserControls\chkSaseg.resx">
+      <DependentUpon>chkSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\clbSaseg.resx">
+      <DependentUpon>clbSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\cmbSaseg.resx">
+      <DependentUpon>cmbSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\dtpSaseg.resx">
+      <DependentUpon>dtpSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\rbSaseg.resx">
+      <DependentUpon>rbSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\rtbSaseg.resx">
+      <DependentUpon>rtbSaseg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\txtNormal.resx">
+      <DependentUpon>txtNormal.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Attachment-2-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Attach-icon.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
