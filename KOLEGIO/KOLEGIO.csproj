@@ -12,6 +12,22 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,9 +51,24 @@
   <PropertyGroup>
     <ApplicationIcon>Oxygen-Icons.org-Oxygen-Categories-applications-education-university.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>34F923534E06447C394E964EDC066D0B69CABDF0</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>KOLEGIO_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Excel.4.5">
-      <HintPath>..\..\..\..\_SASEG\dlls\Excel.4.5.dll</HintPath>
+      <HintPath>..\..\KOLEGIO\Dlls\Excel.4.5.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -55,6 +86,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -980,6 +1012,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="KOLEGIO_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -990,6 +1023,47 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Reportes\Campos de Accion para Empresa Consultoras.rpt" />
+    <None Include="Reportes\Campos Investigación de Plaguicidas.rpt" />
+    <None Include="Reportes\Categoria de Establecimientos Actualizado.rpt" />
+    <None Include="Reportes\Categoria de Establecimientos.rpt" />
+    <None Include="Reportes\Categoría para Regentes.rpt" />
+    <None Include="Reportes\Condicion Colegiado.rpt" />
+    <None Include="Reportes\Cultivos Via Aérea.rpt" />
+    <None Include="Reportes\Estado de Establecimientos.rpt" />
+    <None Include="Reportes\Ficha del Colegiado Encabezado.rpt" />
+    <None Include="Reportes\Orientaciones Académicas.rpt" />
+    <None Include="Reportes\Reporte Consultoras Cerradas.rpt" />
+    <None Include="Reportes\Reporte de Especialidades.rpt" />
+    <None Include="Reportes\Reporte de Establecimientos por Regentes Deudores Colegiados.rpt" />
+    <None Include="Reportes\Reporte de Establecimientos por Regentes.rpt" />
+    <None Include="Reportes\Reporte de Grados Académicos.rpt" />
+    <None Include="Reportes\RPTCierreDiarioDetallado.rpt" />
+    <None Include="Reportes\RPT_Actividades.rpt" />
+    <None Include="Reportes\Rpt_AereasPorColegiado.rpt" />
+    <None Include="Reportes\Rpt_AereasPorColegiadoLinea.rpt" />
+    <None Include="Reportes\RPT_Bitacora.rpt" />
+    <None Include="Reportes\RPT_Colegiados.rpt" />
+    <None Include="Reportes\RPT_Colegiados2.rpt" />
+    <None Include="Reportes\RPT_Colegiados2Genero.rpt" />
+    <None Include="Reportes\RPT_ColegiadosAcademicos.rpt" />
+    <None Include="Reportes\RPT_ColegiadosBeneficiarios.rpt" />
+    <None Include="Reportes\RPT_ColegiadosEspecialidades.rpt" />
+    <None Include="Reportes\RPT_Establecimientos.rpt" />
+    <None Include="Reportes\RPT_FichaConsultoras.rpt" />
+    <None Include="Reportes\RPT_FichaEstablecimientos.rpt" />
+    <None Include="Reportes\RPT_InformesRegencias.rpt" />
+    <None Include="Reportes\RPT_ListadoCamposPorConsultoras.rpt" />
+    <None Include="Reportes\RPT_ListadoCategPorEstablecimiento.rpt" />
+    <None Include="Reportes\RPT_Peritos.rpt" />
+    <None Include="Reportes\RPT_PeritosEnLinea.rpt" />
+    <None Include="Reportes\Rpt_PlaguicidasPorColegiado.rpt" />
+    <None Include="Reportes\Rpt_PlaguicidasPorColegiadoLinea.rpt" />
+    <None Include="Reportes\RPT_Regentes.rpt" />
+    <None Include="Reportes\RPT_RegentesPorEstable.rpt" />
+    <None Include="Reportes\RPT_RegentesPorEstableEnLinea.rpt" />
+    <None Include="Reportes\RPT_RegentesPorEstableEnLinea2.rpt" />
+    <None Include="Reportes\Títulos Académicos.rpt" />
     <None Include="Web References\cr.fi.bccr.indicadoreseconomicos\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -1003,6 +1077,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Oxygen-Icons.org-Oxygen-Categories-applications-education-university.ico" />
+    <Content Include="Reportes\LOGOKOLEGIO.bmp" />
     <None Include="Resources\Test-paper-icon.png" />
     <None Include="Resources\lessons-icon.png" />
     <None Include="Resources\Actions-view-process-own-icon.png" />
@@ -1040,6 +1115,18 @@
       <Project>{18feda0c-d147-4286-b39a-01204808106a}</Project>
       <Name>ObjectListView2012</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 y x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
