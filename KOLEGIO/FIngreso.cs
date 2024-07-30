@@ -372,90 +372,104 @@ namespace KOLEGIO
 
         private void FIngreso_Load(object sender, EventArgs e)
         {
-            string sentencia = "Se han identificado los siguientes problemas en su Configuración Regional:" + "\n" + "\n";
-            string param = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ListSeparator;
-            if (!param.Equals(","))
-                sentencia += "- El Separador de Listas no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
-
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencySymbol;
-            if (!param.Equals("₡") && !param.Equals("¢"))
-                sentencia += "- El Símbolo Monetario no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '¢'." + "\n";
-
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator;
-            if (!param.Equals("."))
-                sentencia += "El Separador Decimal no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '.'." + "\n";
-
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyGroupSeparator;
-            if (!param.Equals(","))
-                sentencia += "- El Separador de Miles no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
-
-            string[] yyyy = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern.Split('/');
-            if (yyyy.Length > 0)
+            try
             {
-                if (!yyyy[2].Equals("yyyy"))
-                    sentencia += "- El Formato de Año no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'yyyy'." + "\n";
-            }
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
-            if (!param.Equals("dd/MM/yyyy"))
-                sentencia += "- El Formato de Fecha no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'dd/MM/yyyy'." + "\n";
+                string sentencia = "Se han identificado los siguientes problemas en su Configuración Regional:" + "\n" + "\n";
+                string param = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ListSeparator;
+                if (!param.Equals(","))
+                    sentencia += "- El Separador de Listas no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
 
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongTimePattern;
-            if (!param.Equals("hh:mm:ss tt"))
-                sentencia += "- El Formato de Hora no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'hh:mm:ss tt'." + "\n";
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencySymbol;
+                if (!param.Equals("₡") && !param.Equals("¢"))
+                    sentencia += "- El Símbolo Monetario no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '¢'." + "\n";
 
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.AMDesignator;
-            if (!param.Equals("AM"))
-                sentencia += "El Símbolo AM no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'AM'." + "\n";
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator;
+                if (!param.Equals("."))
+                    sentencia += "El Separador Decimal no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '.'." + "\n";
 
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.PMDesignator;
-            if (!param.Equals("PM"))
-                sentencia += "- El Símbolo PM no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'PM'." + "\n";
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyGroupSeparator;
+                if (!param.Equals(","))
+                    sentencia += "- El Separador de Miles no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
 
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-            if (!param.Equals("."))
-                sentencia += "- El Separador Decimal para valores monetarios no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '.'." + "\n";
-
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberGroupSeparator;
-            if (!param.Equals(","))
-                sentencia += "- El Separador de Miles para valores monetarios no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
-
-            param = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
-
-            if (!param.Equals("es-CR"))
-                sentencia += "- El Lenguaje no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a Español (Costa Rica)." + "\n";
-
-            if (ConfigurationManager.AppSettings["Usuario"] != null)
-            {
-                if (ConfigurationManager.AppSettings["Usuario"] != string.Empty)
+                string[] yyyy = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern.Split('/');
+                if (yyyy.Length > 0)
                 {
-                    txtUsuario.Text = ConfigurationManager.AppSettings["Usuario"];
-                    this.ActiveControl = txtContrasena;
+                    if (!yyyy[0].Equals("yyyy"))
+                        sentencia += "- El Formato de Año no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'yyyy'." + "\n";
+                    if (yyyy.Length > 1)
+                    {
+                        if (!yyyy[1].Equals("yyyy"))
+                            sentencia += "- El Formato de Año no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'yyyy'." + "\n";
+                    }
+                        
                 }
-            }
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
+                if (!param.Equals("dd/MM/yyyy"))
+                    sentencia += "- El Formato de Fecha no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'dd/MM/yyyy'." + "\n";
 
-            if (sentencia != "Se han identificado los siguientes problemas en su Configuración Regional:" + "\n" + "\n")
-            {
-                sentencia += "\n" + "ES RECOMENDABLE APLICAR LOS CAMBIOS INDICADOS EN LA CONFIGURACION REGIONAL DE SU ESTACION PARA NO TENER PROBLEMAS EN LOS FORMATOS DE FECHAS Y NUMEROS.";
-                //MessageBox.Show(sentencia, "KOLEGIO©  " + DateTime.Now.Year, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (MessageBox.Show(sentencia, "KOLEGIO© ", MessageBoxButtons.YesNo,
-                                                   MessageBoxIcon.Information) == DialogResult.Yes)
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongTimePattern;
+                if (!param.Equals("hh:mm:ss tt"))
+                    sentencia += "- El Formato de Hora no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'hh:mm:ss tt'." + "\n";
+
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.AMDesignator;
+                if (!param.Equals("AM"))
+                    sentencia += "El Símbolo AM no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'AM'." + "\n";
+
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.PMDesignator;
+                if (!param.Equals("PM"))
+                    sentencia += "- El Símbolo PM no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a 'PM'." + "\n";
+
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                if (!param.Equals("."))
+                    sentencia += "- El Separador Decimal para valores monetarios no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a '.'." + "\n";
+
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberGroupSeparator;
+                if (!param.Equals(","))
+                    sentencia += "- El Separador de Miles para valores monetarios no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a ','." + "\n";
+
+                param = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+
+                if (!param.Equals("es-CR"))
+                    sentencia += "- El Lenguaje no es el apropiado. A fin de evitar posibles problemas en el sistema se recomienda cambiarlo a Español (Costa Rica)." + "\n";
+
+                if (ConfigurationManager.AppSettings["Usuario"] != null)
                 {
-					CultureInfo newCulture = new CultureInfo("es-CR");
-                    newCulture.TextInfo.ListSeparator = ",";
-                    newCulture.NumberFormat.CurrencySymbol = "₡";
-                    newCulture.NumberFormat.CurrencyDecimalSeparator = ".";
-                    newCulture.NumberFormat.CurrencyGroupSeparator = ",";
-                    newCulture.DateTimeFormat.AMDesignator = "AM";
-                    newCulture.DateTimeFormat.PMDesignator = "PM";
-                    newCulture.NumberFormat.NumberDecimalSeparator = ".";
-                    newCulture.NumberFormat.NumberGroupSeparator = ",";
-                    newCulture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
-                    newCulture.DateTimeFormat.LongTimePattern = "hh:mm:ss tt";
-                    System.Threading.Thread.CurrentThread.CurrentCulture = newCulture;
-					//Console.WriteLine("es-CR" + " ---> " + DateTime.Now);
+                    if (ConfigurationManager.AppSettings["Usuario"] != string.Empty)
+                    {
+                        txtUsuario.Text = ConfigurationManager.AppSettings["Usuario"];
+                        this.ActiveControl = txtContrasena;
+                    }
                 }
-            }
 
+                if (sentencia != "Se han identificado los siguientes problemas en su Configuración Regional:" + "\n" + "\n")
+                {
+                    sentencia += "\n" + "ES RECOMENDABLE APLICAR LOS CAMBIOS INDICADOS EN LA CONFIGURACION REGIONAL DE SU ESTACION PARA NO TENER PROBLEMAS EN LOS FORMATOS DE FECHAS Y NUMEROS.";
+                    //MessageBox.Show(sentencia, "KOLEGIO©  " + DateTime.Now.Year, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (MessageBox.Show(sentencia, "KOLEGIO© ", MessageBoxButtons.YesNo,
+                                                       MessageBoxIcon.Information) == DialogResult.Yes)
+                    {
+                        CultureInfo newCulture = new CultureInfo("es-CR");
+                        newCulture.TextInfo.ListSeparator = ",";
+                        newCulture.NumberFormat.CurrencySymbol = "₡";
+                        newCulture.NumberFormat.CurrencyDecimalSeparator = ".";
+                        newCulture.NumberFormat.CurrencyGroupSeparator = ",";
+                        newCulture.DateTimeFormat.AMDesignator = "AM";
+                        newCulture.DateTimeFormat.PMDesignator = "PM";
+                        newCulture.NumberFormat.NumberDecimalSeparator = ".";
+                        newCulture.NumberFormat.NumberGroupSeparator = ",";
+                        newCulture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+                        newCulture.DateTimeFormat.LongTimePattern = "hh:mm:ss tt";
+                        System.Threading.Thread.CurrentThread.CurrentCulture = newCulture;
+                        //Console.WriteLine("es-CR" + " ---> " + DateTime.Now);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show( ex.Message, "Atención");
+            }
+            
         }
 
         private void btnConfiguracion_Click(object sender, EventArgs e)
