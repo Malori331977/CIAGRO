@@ -10,8 +10,7 @@ using System.Windows.Forms;
 using System.Threading;
 using BrightIdeasSoftware;
 using System.Collections;
-using System.Text.RegularExpressions;
-using Excel = Microsoft.Office.Interop.Excel;
+using MSExcel = Microsoft.Office.Interop.Excel;
 
 namespace Framework
 {
@@ -232,11 +231,11 @@ namespace Framework
 
                        app.Visible = true;*/
 
-                Excel.Application Excel = new Excel.Application();
+                MSExcel.Application Excel = new MSExcel.Application();
                 Excel.Workbooks.Add();
 
                 // single worksheet
-                Excel._Worksheet Worksheet = Excel.ActiveSheet;
+                MSExcel._Worksheet Worksheet = Excel.ActiveSheet;
                 List<string> columns = new List<string>();
 
                 for (int i = 0; i < flvListado.Columns.Count; i++)
@@ -265,7 +264,7 @@ namespace Framework
                     Header[i] = columns[i];
                 }
 
-                Excel.Range HeaderRange = Worksheet.get_Range((Excel.Range)(Worksheet.Cells[1, 1]), (Excel.Range)(Worksheet.Cells[1, columnas]));
+                MSExcel.Range HeaderRange = Worksheet.get_Range((MSExcel.Range)(Worksheet.Cells[1, 1]), (MSExcel.Range)(Worksheet.Cells[1, columnas]));
                 HeaderRange.Value = Header;
                 HeaderRange.Font.Bold = true;
                 HeaderRange.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
@@ -312,7 +311,7 @@ namespace Framework
                     }
                 }
                 Worksheet.Name = listar.TITULO_LISTADO;
-                Worksheet.get_Range((Excel.Range)(Worksheet.Cells[2, 1]), (Excel.Range)(Worksheet.Cells[rows + 1, columnas])).Value = Cells;
+                Worksheet.get_Range((MSExcel.Range)(Worksheet.Cells[2, 1]), (MSExcel.Range)(Worksheet.Cells[rows + 1, columnas])).Value = Cells;
                 Excel.Visible = true;
                 // DateTime tiempo2 = DateTime.Now;
                 // TimeSpan total = new TimeSpan(tiempo2.Ticks - tiempo1.Ticks);
