@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Management;
 using System.IO;
 using System.Security.Cryptography;
@@ -189,7 +188,7 @@ namespace Framework
         [DllImport("user32.dll")]
         static extern int GetWindowThreadProcessId(int hWnd, out int lpdwProcessId);
 
-        public static Process GetExcelProcess(Excel.Application excelApp)
+        public static Process GetExcelProcess(Microsoft.Office.Interop.Excel.Application excelApp)
         {
             int id;
             GetWindowThreadProcessId(excelApp.Hwnd, out id);

@@ -1,4 +1,5 @@
-﻿using Framework;
+﻿using Excel;
+using Framework;
 using KOLEGIO.Clases;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using excel = Microsoft.Office.Interop.Excel;
+using MSExcel = Microsoft.Office.Interop.Excel;
+
 //using EL = ExcelLibrary.SpreadSheet;
 
 namespace KOLEGIO
@@ -845,7 +847,7 @@ namespace KOLEGIO
 		public void lecturaArchivoXls(DataGridView dgvCarga, string cobrador, string rutaArchivo)
 		{
 			FileStream stream = File.Open(rutaArchivo, FileMode.Open, FileAccess.Read);
-			Excel.IExcelDataReader excelReader = Excel.ExcelReaderFactory.CreateOpenXmlReader(stream);
+			IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
 			excelReader.IsFirstRowAsColumnNames = true;
 			DataSet dataset = excelReader.AsDataSet();
 			DataTable dtDatos = new DataTable();
@@ -2297,10 +2299,10 @@ namespace KOLEGIO
 
 		public static void WriteToExcel(DataTable dt)
 		{
-			excel.Application XlObj = new excel.Application();
+            MSExcel.Application XlObj = new MSExcel.Application();
 			XlObj.Visible = false;
-			excel._Workbook WbObj = (excel.Workbook)(XlObj.Workbooks.Add(""));
-			excel._Worksheet WsObj = (excel.Worksheet)WbObj.ActiveSheet;
+            MSExcel._Workbook WbObj = (MSExcel.Workbook)(XlObj.Workbooks.Add(""));
+            MSExcel._Worksheet WsObj = (MSExcel.Worksheet)WbObj.ActiveSheet;
 			object misValue = System.Reflection.Missing.Value;
 
 
@@ -2327,7 +2329,7 @@ namespace KOLEGIO
 					col = 1;
 					row++;
 				}
-				WbObj.SaveAs("GEN", excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+				WbObj.SaveAs("GEN", MSExcel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, MSExcel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
 			}
 			catch (Exception ex)
 			{
