@@ -27,7 +27,7 @@ namespace KOLEGIO
 				//listar.COLUMNAS = "Nombre,Cobrador,Tipo,AsignacionCobro,Conectividad,Par";
 				//listar.COLUMNAS = "Nombre,Cobrador,Tipo,Conectividad,Par,Bac,PlantillaRespuesta,SubtipoRec";
 				//listar.COLUMNAS = "Nombre,Cobrador,Tipo,Conectividad,Par,Bac,PlantillaRespuesta,SubtipoRec,CerosEnMonto";
-				listar.COLUMNAS = "Codigo,Nombre,Cobrador,Tipo,PlantillaRespuesta,SubtipoRec,CerosEnMonto,SumarArreglo,ArregloPorDocumento,RubroColegiatura,RubroRegencia,TipoIdentificacion,Proyeccion,ListadoPorFac,GenerarPor,ConTab,SeparadorCsv,FormatoInicioLinea,RubroPerito,RubroAerea,RubroPlaguicida,TotalRegistro,TotalMonto,CeroInicialCedula,ConEncabezado";
+				listar.COLUMNAS = "Codigo,Nombre,Cobrador,Tipo,PlantillaRespuesta,SubtipoRec,CerosEnMonto,SumarArreglo,ArregloPorDocumento,RubroColegiatura,RubroRegencia,TipoIdentificacion,Proyeccion,ListadoPorFac,GenerarPor,ConTab,SeparadorCsv,FormatoInicioLinea,RubroPerito,RubroAerea,RubroPlaguicida,TotalRegistro,TotalMonto,CeroInicialCedula,ConEncabezado, NombreArchivo, CodigoEntidad";
 				listar.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
 				listar.TABLA = "NV_PLANTILLA_COBRADOR";
 
@@ -229,8 +229,10 @@ namespace KOLEGIO
 								rbSeparadorPuntoComa.Checked = row["SeparadorCsv"].ToString().Equals(";") ? true : false;
 
 								txtFormatoInicioLinea.Valor = row["FormatoInicioLinea"].ToString();
+                                txtNombreArchivo.Valor = row["NombreArchivo"].ToString();
+                                txtCodigoEntidad.Valor = row["CodigoEntidad"].ToString();
 
-								deshabilitarLlave();
+                                deshabilitarLlave();
 								cargarDetalle();
 							}
 						}
@@ -399,7 +401,10 @@ namespace KOLEGIO
 			else
 				parametros.Add("N");
 
-			return true;
+            parametros.Add(txtNombreArchivo.Valor);
+            parametros.Add(txtCodigoEntidad.Valor);
+
+            return true;
 		}
 
 		protected override bool validarDatos(ref string error)

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows.Forms;
 using Framework;
 
@@ -1089,25 +1090,28 @@ namespace KOLEGIO
             bool lbOk = true;
             try
             {
-                string sQuery = "DELETE FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "'";
+                /*marlon loria.  No se deben eliminar las categorias de los establecimientos*/
+                //string sQuery = "DELETE FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "'";
 
-                lbOk = Consultas.ejecutarSentencia(sQuery, ref error);
+                //lbOk = Consultas.ejecutarSentencia(sQuery, ref error);
 
-                if (lbOk)
-                {
+                //if (lbOk)
+                //{
                     foreach (DataGridViewRow row in dgvCategorias.Rows)
                     {
-                        parametros.Clear();
-                        list.COLUMNAS_PK.Clear();
-                        list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
-                        list.COLUMNAS_PK.Add("CodigoCategoria");
-                        parametros.Add(txtNumRegistro.Valor);
-                        parametros.Add(row.Cells["colCodigoCategoria"].Value.ToString());
-                        parametros.Add(row.Cells["colDescripcionCat"].Value.ToString());
-                        lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
-
+                        if (!ExisteCategoria(row.Cells["colCodigoCategoria"].Value.ToString(), txtNumRegistro.Valor))
+                        {
+                            parametros.Clear();
+                            list.COLUMNAS_PK.Clear();
+                            list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
+                            list.COLUMNAS_PK.Add("CodigoCategoria");
+                            parametros.Add(txtNumRegistro.Valor);
+                            parametros.Add(row.Cells["colCodigoCategoria"].Value.ToString());
+                            parametros.Add(row.Cells["colDescripcionCat"].Value.ToString());
+                            lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
+                        }
                     }
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -1115,6 +1119,19 @@ namespace KOLEGIO
                 return false;
             }
             return lbOk;
+        }
+
+        private bool ExisteCategoria(string categoria, string establecimiento)
+        {
+            DataTable dtCatEst = new DataTable();
+            string sSelectCl = $"select * from {Consultas.sqlCon.COMPAÑIA}.NV_ESTABLECIMIENTOS_CATEGORIAS where CodigoCategoria = '{categoria}' and NumRegistroEstablecimiento='{establecimiento}'";
+
+            var lbOk = Consultas.fillDataTable(sSelectCl, ref dtCatEst, ref error);
+
+            if (lbOk && dtCatEst.Rows.Count > 0)
+                return true;
+
+            return false;
         }
 
         private bool guardarInformes(ref string error)
