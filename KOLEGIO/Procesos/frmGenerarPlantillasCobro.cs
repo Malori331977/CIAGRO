@@ -29,8 +29,8 @@ namespace KOLEGIO
 			}
 
 			DataTable dtInfo = new DataTable();
-			string sQuery = "SELECT Nombre,Tipo,Conectividad,Par,Bac,CerosEnMonto,SumarArreglo,ArregloPorDocumento,RubroColegiatura,RubroRegencia,Proyeccion,ListadoPorFac,GenerarPor,SeparadorCsv,FormatoInicioLinea,RubroPerito,RubroAerea,RubroPlaguicida,TotalRegistro,TotalMonto,CeroInicialCedula,ConEncabezado from " + Consultas.sqlCon.COMPAÑIA + ".NV_PLANTILLA_COBRADOR WHERE Codigo='" + txtCodigo.Text + "'";
-			string error = "", extension = "", nombreArchivo = "", indicadorConectividad = "", indicadorPar = "", indicadorBac = "", cerosEnMonto = "", SumarArreglo = "", ArregloPorDocumento = "", RubroColegiatura = "", RubroRegencia = "", proyeccion = "", GenerarPor = "", ListadoPorFac = "", SeparadorCsv = "", FormatoInicioLinea = "", RubroPerito = "", RubroAerea = "", RubroPlaguicida = "", TotalRegistro = "", TotalMonto = "", CeroCedula = "", ConEncabezado = "";
+			string sQuery = "SELECT Nombre,Tipo,Conectividad,Par,Bac,CerosEnMonto,SumarArreglo,ArregloPorDocumento,RubroColegiatura,RubroRegencia,Proyeccion,ListadoPorFac,GenerarPor,SeparadorCsv,FormatoInicioLinea,RubroPerito,RubroAerea,RubroPlaguicida,TotalRegistro,TotalMonto,CeroInicialCedula,ConEncabezado,NombreArchivo, CodigoEntidad from " + Consultas.sqlCon.COMPAÑIA + ".NV_PLANTILLA_COBRADOR WHERE Codigo='" + txtCodigo.Text + "'";
+			string error = "", extension = "", nombreArchivo = "", indicadorConectividad = "", indicadorPar = "", indicadorBac = "", cerosEnMonto = "", SumarArreglo = "", ArregloPorDocumento = "", RubroColegiatura = "", RubroRegencia = "", proyeccion = "", GenerarPor = "", ListadoPorFac = "", SeparadorCsv = "", FormatoInicioLinea = "", RubroPerito = "", RubroAerea = "", RubroPlaguicida = "", TotalRegistro = "", TotalMonto = "", CeroCedula = "", ConEncabezado = "", fileName="", codigoEntidad="";
 			bool OK = true;
 
 
@@ -73,8 +73,10 @@ namespace KOLEGIO
 						TotalMonto = dtInfo.Rows[0]["TotalMonto"].ToString();
 						CeroCedula = dtInfo.Rows[0]["CeroInicialCedula"].ToString();
 						ConEncabezado = dtInfo.Rows[0]["ConEncabezado"].ToString();
+                        fileName = dtInfo.Rows[0]["NombreArchivo"].ToString();
+                        codigoEntidad = dtInfo.Rows[0]["CodigoEntidad"].ToString();
 
-						DataTable dtFormatos = new DataTable();
+                        DataTable dtFormatos = new DataTable();
 						sQuery = "SELECT Columna,Orden,Caracteres,TamColumna,Detalle,Macro,Formato FROM " + Consultas.sqlCon.COMPAÑIA +
 							".NV_PLANTILLA_COBRADOR_DETALLE WHERE Codigo='" + txtCodigo.Text + "' order by Columna,Orden";
 						
@@ -86,8 +88,23 @@ namespace KOLEGIO
 							{
 								StringBuilder texto = new StringBuilder();
 								SaveFileDialog savefile = new SaveFileDialog();
-								// set a default file name
-								savefile.FileName = nombreArchivo;
+
+								/*marlon loria.  Cuando la plantilla lleva nombre de archivo se debe dar formato al nombre segun la especificacion*/
+								if (!string.IsNullOrEmpty(codigoEntidad)) {
+									fileName = fileName.Replace("yyyyMMdd", DateTime.Now.ToString("yyyyMMdd"));
+									if (!string.IsNullOrEmpty(fileName))
+									{
+                                        fileName = fileName.Replace("UUU", codigoEntidad);
+                                    }
+									fileName = fileName + extension;
+                                    savefile.FileName = fileName;
+                                }
+								else
+								{
+                                    // set a default file name
+                                    savefile.FileName = nombreArchivo;
+                                }
+								
 								// set filters - this can be done in properties as well
 
 								savefile.Filter = extension == ".txt" ? "Text files (*.txt)|*.txt" : extension == ".xlsx" ? "Excel files (*.xlsx)|*.xlsx" : "Csv files (*.csv)|*.csv";
@@ -123,659 +140,670 @@ namespace KOLEGIO
 										if (dtDatos.Rows.Count > 0)
 										{
 											OK = insertarAplicaciones(dtDatosPersistencia, dtDatosParcPersistencia, txtCobrador.Text, true, ref error);
-											//OK = insertarAplicaciones(dtDatosPersistencia, txtCobrador.Text, esNumfactura, ref error);
 
 											if (OK) 
 											{
-												//if (extension == ".xls" || extension == ".xlsx")
-												//{
-												//Excell.Application oApp = new Excell.Application();
-												//Excell.Worksheet oSheet = new Excell.Worksheet();
-												//Excell.Workbook oBook = oApp.Workbooks.Add();
-												//}
-												Excell.Application Excel = new Excell.Application();
-												Excell.Workbook oBook = Excel.Workbooks.Add();
-												Excell._Worksheet Worksheet = Excel.ActiveSheet;
-												int indexHeader = 0;
-												object[] Header = new object[dtFormatos.Rows.Count];
-												object[,] Cells = new object[dtDatos.Rows.Count, dtFormatos.Rows.Count];
+                                                if (!File.Exists(savefile.FileName))
+                                                    File.Delete(savefile.FileName);
 
-												if (extension == ".xls" || extension == ".xlsx")
+												File.WriteAllText(savefile.FileName, "");
+                                                decimal montoTotal = 0;
+                                                //int rowIndex = 0;
+                                                int rowIndex = 1;
+                                                int rowIndexExcel = 0;
+                                                bool montoMayorACaracteres = false;
+
+
+                                                if (extension == ".xls" || extension == ".xlsx")
 												{
-													foreach (DataRow row in dtFormatos.Rows)
-													{
-														if (indexHeader <= cantFormatos)
-														{
-															Header[indexHeader] = row["Detalle"].ToString();
+                                                    Excell.Application Excel = new Excell.Application();
+                                                    Excell.Workbook oBook = Excel.Workbooks.Add();
+                                                    Excell._Worksheet Worksheet = Excel.ActiveSheet;
+                                                    int indexHeader = 0;
+                                                    object[] Header = new object[dtFormatos.Rows.Count];
+                                                    object[,] Cells = new object[dtDatos.Rows.Count, dtFormatos.Rows.Count];
 
-															indexHeader += 1;
-														}
-													}
-												}
+                                                    if (extension == ".xls" || extension == ".xlsx")
+                                                    {
+                                                        foreach (DataRow row in dtFormatos.Rows)
+                                                        {
+                                                            if (indexHeader <= cantFormatos)
+                                                            {
+                                                                Header[indexHeader] = row["Detalle"].ToString();
 
-												Excell.Range HeaderRange = Worksheet.get_Range((Excell.Range)(Worksheet.Cells[1, 1]), (Excell.Range)(Worksheet.Cells[1, dtFormatos.Rows.Count]));
-												HeaderRange.Value = Header;
-												HeaderRange.Font.Bold = true;
+                                                                indexHeader += 1;
+                                                            }
+                                                        }
+                                                    }
 
-												if (!File.Exists(savefile.FileName))
-													File.Delete(savefile.FileName);
+                                                    Excell.Range HeaderRange = Worksheet.get_Range((Excell.Range)(Worksheet.Cells[1, 1]), (Excell.Range)(Worksheet.Cells[1, dtFormatos.Rows.Count]));
+                                                    HeaderRange.Value = Header;
+                                                    HeaderRange.Font.Bold = true;
 
-												decimal montoTotal = 0;
-												//int rowIndex = 0;
-												int rowIndex = 1;
-												int rowIndexExcel = 0;
-												bool montoMayorACaracteres = false;
+                                                    foreach (DataRow rowDatos in dtDatos.Rows)
+                                                    {
+                                                        rowIndex += 1;
+
+                                                        #region XLS
+                                                        int i = 0;
+                                                        int iCol = 0;
+
+                                                        foreach (DataColumn dc in dtDatos.Columns)
+                                                        {
+                                                            if (dtFormatos.Rows[iCol]["Macro"].ToString() == "CEDULA")
+                                                            {
+                                                                string dataColumn = "";
+
+                                                                if (CeroCedula.Equals("S"))
+                                                                    dataColumn = "0";
+
+                                                                dataColumn += "'" + dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + rowDatos[dc].ToString();
+
+                                                                Cells[rowIndexExcel, iCol] = dataColumn;
+                                                            }
+                                                            else
+                                                            {
+                                                                if (dtFormatos.Rows[i]["Macro"].ToString() == "NUMERO_FACTURA")
+                                                                {
+                                                                    Cells[rowIndexExcel, iCol] = "'" + dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + fInternas.quitarCerosMontoInicio(rowDatos[dc].ToString());
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "SALDO")
+                                                                    {
+                                                                        Cells[rowIndexExcel, iCol] = dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + decimal.Parse(rowDatos[dc].ToString());
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (dtFormatos.Rows[i]["Macro"].ToString() == "MONTO")
+                                                                        {
+                                                                            Cells[rowIndexExcel, iCol] = dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + decimal.Parse(rowDatos[dc].ToString());
+                                                                        }
+                                                                        else
+                                                                            Cells[rowIndexExcel, iCol] = iCol == 0 ? FormatoInicioLinea + rowDatos[dc].ToString() : "" + rowDatos[dc].ToString();
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            iCol++;
+                                                        }
+
+                                                        #endregion
+                                                        rowIndexExcel += 1;
+                                                    }
+                                                    //oSheet.Name = "PLANTILLA_KOLEGIO";
+                                                    //oSheet.Columns.AutoFit();
 
 
-												if (ConEncabezado.Equals("S") && extension == ".txt" || extension == ".csv")
+                                                    Worksheet.Name = "PLANTILLA_KOLEGIO";
+                                                    Worksheet.get_Range((Excell.Range)(Worksheet.Cells[2, 1]), (Excell.Range)(Worksheet.Cells[dtDatos.Rows.Count + 1, dtFormatos.Rows.Count])).Value = Cells;
+                                                    Worksheet.Columns.AutoFit();
+                                                    oBook.SaveAs(savefile.FileName);
+                                                    oBook.Close();
+                                                    Excel.Quit();
+
+                                                }
+												else
 												{
-													string fila = "";
-
-													foreach (DataRow row in dtFormatos.Rows)
-													{
-														if (row["Orden"].ToString() == "1")
-														{
-															fila += row["Detalle"].ToString();
-														}
-														else
-															fila += (extension == ".csv" ? SeparadorCsv : "") + row["Detalle"].ToString();
-													}
-
-													File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
-												}
-
-												foreach (DataRow rowDatos in dtDatos.Rows)
-												{
-													rowIndex += 1;
-
-													if (extension == ".txt")
-													{
-														#region TXT
-														string fila = "";
-														int i = 0;
-														foreach (DataRow row in dtFormatos.Rows)
-														{
-															if (i <= cantFormatos)
-															{
-																if (i == 1)
-																	fila += FormatoInicioLinea;
-
-																string formato = dtFormatos.Rows[i]["Formato"].ToString();
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "CARNET")
-																{
-																	if (rowDatos["NumeroColegiado"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																	{
-																		fila += rowDatos["NumeroColegiado"].ToString();
-																		int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["NumeroColegiado"].ToString().Length;
-
-																		for (int j = 0; j < espacios; j++)
-																			fila += "0";
-																	}
-																	else
-																		fila += rowDatos["NumeroColegiado"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		//int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - rowDatos["NumeroColegiado"].ToString().Length;
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-
-																}
-
-																//if (dtFormatos.Rows[i]["Macro"].ToString() == "CARNET")
-																//    oSheet.Cells[rowIndex, int.Parse(row["Orden"].ToString())] = rowDatos["NumeroColegiado"].ToString();
-
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "CEDULA")
-																{
-																	if (CeroCedula.Equals("S"))
-																		fila += "0";
-
-																	if (rowDatos["Cedula"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																	{
-																		fila += rowDatos["Cedula"].ToString().Trim();
-
-																		int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Cedula"].ToString().Length;
-
-																		for (int j = 0; j < espacios; j++)
-																			fila += "0";
-																	}
-																	else
-																		fila += rowDatos["Cedula"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																	
-																	//fila += rowDatos["Cedula"].ToString().Trim();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		//int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - rowDatos["Cedula"].ToString().Length;
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "NOMBRE")
-																{
-																	if (rowDatos["Nombre"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																	{
-																		fila += rowDatos["Nombre"].ToString();
-																		int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Nombre"].ToString().Length;
-
-																		for (int j = 0; j < espacios; j++)
-																			fila += " ";
-																	}
-																	else
-																		fila += rowDatos["Nombre"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "APLICACION")
-																{
-																	if (rowDatos["Aplicacion"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																	{
-																		fila += rowDatos["Aplicacion"].ToString();
-																		int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Aplicacion"].ToString().Length;
-
-																		for (int j = 0; j < espacios; j++)
-																			fila += " ";
-																	}
-																	else
-																		fila += rowDatos["Aplicacion"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "CORREO")
-																{
-																	if (rowDatos["Email"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																	{
-																		fila += rowDatos["Email"].ToString();
-																		int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Email"].ToString().Length;
-
-																		for (int j = 0; j < espacios; j++)
-																			fila += " ";
-																	}
-																	else
-																		fila += rowDatos["Email"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "MONTO")
-																{
-																	int decimales = 0;
-																	string monto = "";
-																	int tamaño = 0;
-																	//int ceros = 0;
-																	int espaciosPorTamañoSaldo = 0;
-																	if (dtFormatos.Rows[i]["Formato"].ToString().Contains("."))
-																	{
-
-																		//monto = obtenerMontoArreglo(rowDatos["Email"].ToString());
-
-																		decimales = dtFormatos.Rows[i]["Formato"].ToString().Split('.')[1].Length;
-
-																		monto += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0] + ".";
-
-																		for (int j = 0; j < decimales; j++)
-																		{
-																			monto += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[1][j];
-																		}
-
-																		//if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
-																		//    monto = decimal.Parse(monto) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
-
-																		//tamaño = monto.ToString().Length - 1;
-																		tamaño = monto.ToString().Length - 1;
-																		if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																			espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
-																		else
-																		{
-																			if (!dtDatos.Columns.Contains("Nombre"))
-																				MessageBox.Show("Error de formato del monto, tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-																			else
-																				MessageBox.Show("Error de formato, el monto del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-																			return;
-																		}
-
-																		//for (int j = 0; j < ceros; j++)
-																		//    fila += "0";
-																		if (cerosEnMonto.Equals("S"))
-																		{
-																			for (int j = 0; j < espaciosPorTamañoSaldo; j++)
-																				fila += "0";
-																		}
-																	}
-																	else
-																	{
-																		monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
-																		tamaño = monto.ToString().Length;
-																		//if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																		//    ceros = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
-																		//else
-																		//    montoMayorACaracteres = true;
-
-																		//for (int j = 0; j < ceros; j++)
-																		//fila += "0";
-
-																		if (rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Contains("."))
-																		{
-																			if (montoMayorACaracteres)
-																				monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0].Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																			else
-																				monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
-																		}
-																		else
-																		{
-																			if (montoMayorACaracteres)
-																				monto = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))) + "";
-																			else
-																				monto = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString()) + "";
-																		}
-
-																		//if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
-																		//    monto = decimal.Parse(monto) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
-
-																	}
-
-																	fila += monto;
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		//int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																		//int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - tamaño;
-																		int espaciosColumna = (int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString())) + espaciosPorTamañoSaldo;
-																		espaciosColumna += espaciosPorTamañoSaldo;
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "SALDO")
-																{
-																	int decimales = 0;
-																	string saldo = "";
-																	int tamaño = 0;
-																	//int ceros = 0;
-																	int espaciosPorTamañoSaldo = 0;
-																	if (dtFormatos.Rows[i]["Formato"].ToString().Contains("."))
-																	{
-																		decimales = dtFormatos.Rows[i]["Formato"].ToString().Split('.')[1].Length;
-
-																		saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0] + ".";
-
-																		for (int j = 0; j < decimales; j++)
-																		{
-																			saldo += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[1][j];
-																		}
-
-																		//if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
-																		//    saldo = decimal.Parse(saldo) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
-
-																		//tamaño = saldo.ToString().Length - 1;
-																		tamaño = saldo.ToString().Length;
-																		if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																			espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
-																		else
-																		{
-																			if (!dtDatos.Columns.Contains("Nombre"))
-																				MessageBox.Show("Error de formato del monto, tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-																			else
-																				MessageBox.Show("Error de formato, el monto del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-																			return;
-																		}
-
-																		if (cerosEnMonto.Equals("S"))
-																		{
-																			for (int j = 0; j < espaciosPorTamañoSaldo; j++)
-																				fila += "0";
-																		}
-																	}
-																	else
-																	{
-																		saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
-																		tamaño = saldo.ToString().Length;
-
-																		//if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																		//    //ceros = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
-																		//else
-																		//    montoMayorACaracteres = true;
-
-																		//for (int j = 0; j < ceros; j++)
-																		//    fila += "0";
-
-																		if (rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Contains("."))
-																		{
-																			if (montoMayorACaracteres)
-																				saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0].Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																			else
-																				saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
-																		}
-																		else
-																		{
-																			if (montoMayorACaracteres)
-																				saldo = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))) + "";
-																			else
-																				saldo = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString()) + "";
-																		}
-
-																		if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																			espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
-
-																		if (cerosEnMonto.Equals("S"))
-																		{
-																			for (int j = 0; j < espaciosPorTamañoSaldo; j++)
-																				fila += "0";
-																		}
-																		//if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
-																		//    saldo = decimal.Parse(saldo) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
-																	}
-
-																	fila += saldo;
-																	montoTotal += decimal.Parse(saldo);
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		//int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																		int espaciosColumna = (int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString())) + espaciosPorTamañoSaldo;
-																		//espaciosColumna -= espaciosPorTamañoSaldo; 
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "DECIMALES")
-																{
-																	fila += dtFormatos.Rows[i]["Formato"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																//if (dtFormatos.Rows[i]["Macro"].ToString() == "DECIMALES")
-																//{
-																//    int total = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																//    string monto = "";
-																//    monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
-																//    if (monto.Contains("."))
-																//    {
-																//        if (monto.Split('.')[1].Length >= total)
-																//            fila += monto.Split('.')[1].Substring(0, total);
-																//        else
-																//            fila += monto.Split('.')[1];
-
-																//        int falta = total - monto.Split('.')[1].Length;
-
-																//        for (int j = 0; j < falta; j++)
-																//            fila += "0";
-
-																//    }
-																//    else
-																//    {
-																//        fila += ".";
-																//        for (int j = 0; j < total; j++)
-																//            fila += "0";
-
-																//    }
-
-																//    if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																//    {
-																//        int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																//        for (int j = 0; j < espaciosColumna; j++)
-																//            fila += " ";
-																//    }
-																//}
-
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "AÑO")
-																{
-																	int total = rowDatos["AÑO"].ToString().Length;
-																	int totalCaracteres = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																	if (totalCaracteres > 4)
-																	{
-																		MessageBox.Show("Error de formato,el año en la fila del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres que del formato de un año.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-																		return;
-																	}
-
-																	if (total == 4 && totalCaracteres == 2)
-																		fila += rowDatos["AÑO"].ToString().Remove(0, 2);
-																	else
-																		if (total == 4 && totalCaracteres == 4)
-																		fila += rowDatos["AÑO"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "MES")
-																{
-																	fila += rowDatos["MES"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "CONSTANTE")
-																{
-																	fila += dtFormatos.Rows[i]["Formato"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "TARJETA")
-																{
-																	fila += rowDatos["NumeroTarjeta"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "CONSECUTIVO")
-																{
-																	fila += rowDatos["contador"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "VENCIMIENTO_TARJETA")
-																{
-																	fila += rowDatos["venc_tarjeta"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "NUMERO_FACTURA")
-																{
-																	//fila += rowDatos["numFactura"].ToString();
-
-																	//if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	//{
-																	//    int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																	//    for (int j = 0; j < espaciosColumna; j++)
-																	//        fila += " ";
-																	//}
-
-																	if (int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) > rowDatos["numFactura"].ToString().Length)
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["numFactura"].ToString().Length;
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-
-																	fila += rowDatos["numFactura"].ToString();
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA")
-																{
-
-																	fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_FACTURA")
-																{
-
-																	fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "VENCIMIENTO_FACTURA")
-																{
-
-																	fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_INICIO_MES")
-																{
-																	fila += rowDatos["mesIni"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_FIN_MES")
-																{
-																	fila += rowDatos["mesFin"].ToString();
-
-																	if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
-																	{
-																		int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-
-																		for (int j = 0; j < espaciosColumna; j++)
-																			fila += " ";
-																	}
-																}
-
-																i += 1;
-															}
-														}
-
-														File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
-														#endregion
-													}
-													else
-													{
-														if (extension == ".xls" || extension == ".xlsx")
-														{
-															#region XLS
-															int i = 0;
-
-															int iCol = 0;
-
-															foreach (DataColumn dc in dtDatos.Columns)
-															{
-																if (dtFormatos.Rows[iCol]["Macro"].ToString() == "CEDULA")
-																{
-																	string dataColumn = "";
-
-																	if (CeroCedula.Equals("S"))
-																		dataColumn = "0"; 
-																	
-																	dataColumn += "'" + dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + rowDatos[dc].ToString();
-
-																	Cells[rowIndexExcel, iCol] = dataColumn;
-																}
-																else
-																{
-																	if (dtFormatos.Rows[i]["Macro"].ToString() == "NUMERO_FACTURA")
-																	{
-																		Cells[rowIndexExcel, iCol] = "'" + dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + fInternas.quitarCerosMontoInicio(rowDatos[dc].ToString());
-																	}
-																	else
-																	{
-																		if (dtFormatos.Rows[i]["Macro"].ToString() == "SALDO")
-																		{
-																			Cells[rowIndexExcel, iCol] = dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + decimal.Parse(rowDatos[dc].ToString());
-																		}
-																		else
-																		{
-																			if (dtFormatos.Rows[i]["Macro"].ToString() == "MONTO")
-																			{
-																				Cells[rowIndexExcel, iCol] = dtFormatos.Rows[i]["Orden"].ToString() == "1" ? FormatoInicioLinea : "" + decimal.Parse(rowDatos[dc].ToString());
-																			}
-																			else
-																				Cells[rowIndexExcel, iCol] = iCol == 0 ? FormatoInicioLinea + rowDatos[dc].ToString() : "" + rowDatos[dc].ToString();
-																		}
-																	}
-																}
-
-																iCol++;
-															}
-
-															#endregion
-														}
-														else
-														{
+                                                    if (ConEncabezado.Equals("S") && extension == ".txt" || extension == ".csv")
+                                                    {
+                                                        string fila = "";
+
+                                                        foreach (DataRow row in dtFormatos.Rows)
+                                                        {
+                                                            if (row["Orden"].ToString() == "1")
+                                                            {
+                                                                fila += row["Detalle"].ToString();
+                                                            }
+                                                            else
+                                                                fila += (extension == ".csv" ? SeparadorCsv : "") + row["Detalle"].ToString();
+                                                        }
+
+                                                        File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
+                                                    }
+
+                                                    foreach (DataRow rowDatos in dtDatos.Rows)
+                                                    {
+                                                        rowIndex += 1;
+
+                                                        if (extension == ".txt")
+                                                        {
+                                                            #region TXT
+                                                            string fila = "";
+                                                            int i = 0;
+                                                            foreach (DataRow row in dtFormatos.Rows)
+                                                            {
+                                                                if (i <= cantFormatos)
+                                                                {
+                                                                    if (i == 1)
+                                                                        fila += FormatoInicioLinea;
+
+                                                                    string formato = dtFormatos.Rows[i]["Formato"].ToString();
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "CARNET")
+                                                                    {
+                                                                        if (rowDatos["NumeroColegiado"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                        {
+                                                                            fila += rowDatos["NumeroColegiado"].ToString();
+                                                                            int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["NumeroColegiado"].ToString().Length;
+
+                                                                            for (int j = 0; j < espacios; j++)
+                                                                                fila += "0";
+                                                                        }
+                                                                        else
+                                                                            fila += rowDatos["NumeroColegiado"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            //int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - rowDatos["NumeroColegiado"].ToString().Length;
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+
+                                                                    }
+
+                                                                    //if (dtFormatos.Rows[i]["Macro"].ToString() == "CARNET")
+                                                                    //    oSheet.Cells[rowIndex, int.Parse(row["Orden"].ToString())] = rowDatos["NumeroColegiado"].ToString();
+
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "CEDULA")
+                                                                    {
+                                                                        if (CeroCedula.Equals("S"))
+                                                                            fila += "0";
+
+                                                                        if (rowDatos["Cedula"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                        {
+                                                                            fila += rowDatos["Cedula"].ToString().Trim();
+
+                                                                            int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Cedula"].ToString().Length;
+
+                                                                            for (int j = 0; j < espacios; j++)
+                                                                                fila += "0";
+                                                                        }
+                                                                        else
+                                                                            fila += rowDatos["Cedula"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+
+                                                                        //fila += rowDatos["Cedula"].ToString().Trim();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            //int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - rowDatos["Cedula"].ToString().Length;
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "NOMBRE")
+                                                                    {
+                                                                        if (rowDatos["Nombre"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                        {
+                                                                            fila += rowDatos["Nombre"].ToString();
+                                                                            int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Nombre"].ToString().Length;
+
+                                                                            for (int j = 0; j < espacios; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                        else
+                                                                            fila += rowDatos["Nombre"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "APLICACION")
+                                                                    {
+                                                                        if (rowDatos["Aplicacion"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                        {
+                                                                            fila += rowDatos["Aplicacion"].ToString();
+                                                                            int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Aplicacion"].ToString().Length;
+
+                                                                            for (int j = 0; j < espacios; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                        else
+                                                                            fila += rowDatos["Aplicacion"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "CORREO")
+                                                                    {
+                                                                        if (rowDatos["Email"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                        {
+                                                                            fila += rowDatos["Email"].ToString();
+                                                                            int espacios = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["Email"].ToString().Length;
+
+                                                                            for (int j = 0; j < espacios; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                        else
+                                                                            fila += rowDatos["Email"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "MONTO")
+                                                                    {
+                                                                        int decimales = 0;
+                                                                        string monto = "";
+                                                                        int tamaño = 0;
+                                                                        //int ceros = 0;
+                                                                        int espaciosPorTamañoSaldo = 0;
+                                                                        if (dtFormatos.Rows[i]["Formato"].ToString().Contains("."))
+                                                                        {
+
+                                                                            //monto = obtenerMontoArreglo(rowDatos["Email"].ToString());
+
+                                                                            decimales = dtFormatos.Rows[i]["Formato"].ToString().Split('.')[1].Length;
+
+                                                                            monto += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0] + ".";
+
+                                                                            for (int j = 0; j < decimales; j++)
+                                                                            {
+                                                                                monto += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[1][j];
+                                                                            }
+
+                                                                            //if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
+                                                                            //    monto = decimal.Parse(monto) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
+
+                                                                            //tamaño = monto.ToString().Length - 1;
+                                                                            tamaño = monto.ToString().Length - 1;
+                                                                            if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                                espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
+                                                                            else
+                                                                            {
+                                                                                if (!dtDatos.Columns.Contains("Nombre"))
+                                                                                    MessageBox.Show("Error de formato del monto, tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                                                else
+                                                                                    MessageBox.Show("Error de formato, el monto del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                                                return;
+                                                                            }
+
+                                                                            //for (int j = 0; j < ceros; j++)
+                                                                            //    fila += "0";
+                                                                            if (cerosEnMonto.Equals("S"))
+                                                                            {
+                                                                                for (int j = 0; j < espaciosPorTamañoSaldo; j++)
+                                                                                    fila += "0";
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
+                                                                            tamaño = monto.ToString().Length;
+                                                                            //if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                            //    ceros = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
+                                                                            //else
+                                                                            //    montoMayorACaracteres = true;
+
+                                                                            //for (int j = 0; j < ceros; j++)
+                                                                            //fila += "0";
+
+                                                                            if (rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Contains("."))
+                                                                            {
+                                                                                if (montoMayorACaracteres)
+                                                                                    monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0].Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+                                                                                else
+                                                                                    monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (montoMayorACaracteres)
+                                                                                    monto = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))) + "";
+                                                                                else
+                                                                                    monto = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString()) + "";
+                                                                            }
+
+                                                                            //if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
+                                                                            //    monto = decimal.Parse(monto) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
+
+                                                                        }
+
+                                                                        fila += monto;
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            //int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                            //int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - tamaño;
+                                                                            int espaciosColumna = (int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString())) + espaciosPorTamañoSaldo;
+                                                                            espaciosColumna += espaciosPorTamañoSaldo;
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "SALDO")
+                                                                    {
+                                                                        int decimales = 0;
+                                                                        string saldo = "";
+                                                                        int tamaño = 0;
+                                                                        //int ceros = 0;
+                                                                        int espaciosPorTamañoSaldo = 0;
+                                                                        if (dtFormatos.Rows[i]["Formato"].ToString().Contains("."))
+                                                                        {
+                                                                            decimales = dtFormatos.Rows[i]["Formato"].ToString().Split('.')[1].Length;
+
+                                                                            saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0] + ".";
+
+                                                                            for (int j = 0; j < decimales; j++)
+                                                                            {
+                                                                                saldo += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[1][j];
+                                                                            }
+
+                                                                            //if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
+                                                                            //    saldo = decimal.Parse(saldo) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
+
+                                                                            //tamaño = saldo.ToString().Length - 1;
+                                                                            tamaño = saldo.ToString().Length;
+                                                                            if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                                espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
+                                                                            else
+                                                                            {
+                                                                                if (!dtDatos.Columns.Contains("Nombre"))
+                                                                                    MessageBox.Show("Error de formato del monto, tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                                                else
+                                                                                    MessageBox.Show("Error de formato, el monto del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres de los configurados en la plantilla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                                                return;
+                                                                            }
+
+                                                                            if (cerosEnMonto.Equals("S"))
+                                                                            {
+                                                                                for (int j = 0; j < espaciosPorTamañoSaldo; j++)
+                                                                                    fila += "0";
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
+                                                                            tamaño = saldo.ToString().Length;
+
+                                                                            //if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                            //    //ceros = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
+                                                                            //else
+                                                                            //    montoMayorACaracteres = true;
+
+                                                                            //for (int j = 0; j < ceros; j++)
+                                                                            //    fila += "0";
+
+                                                                            if (rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Contains("."))
+                                                                            {
+                                                                                if (montoMayorACaracteres)
+                                                                                    saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0].Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
+                                                                                else
+                                                                                    saldo = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Split('.')[0];
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (montoMayorACaracteres)
+                                                                                    saldo = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))) + "";
+                                                                                else
+                                                                                    saldo = decimal.Parse(rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString()) + "";
+                                                                            }
+
+                                                                            if (tamaño <= int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
+                                                                                espaciosPorTamañoSaldo = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - tamaño;
+
+                                                                            if (cerosEnMonto.Equals("S"))
+                                                                            {
+                                                                                for (int j = 0; j < espaciosPorTamañoSaldo; j++)
+                                                                                    fila += "0";
+                                                                            }
+                                                                            //if (esNumfactura && !rowDatos["montoArreglo"].ToString().Equals(""))
+                                                                            //    saldo = decimal.Parse(saldo) + decimal.Parse(rowDatos["montoArreglo"].ToString().Split('.')[0]) + "";
+                                                                        }
+
+                                                                        fila += saldo;
+                                                                        montoTotal += decimal.Parse(saldo);
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            //int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                            int espaciosColumna = (int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString())) + espaciosPorTamañoSaldo;
+                                                                            //espaciosColumna -= espaciosPorTamañoSaldo; 
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "DECIMALES")
+                                                                    {
+                                                                        fila += dtFormatos.Rows[i]["Formato"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    //if (dtFormatos.Rows[i]["Macro"].ToString() == "DECIMALES")
+                                                                    //{
+                                                                    //    int total = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                    //    string monto = "";
+                                                                    //    monto = rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
+                                                                    //    if (monto.Contains("."))
+                                                                    //    {
+                                                                    //        if (monto.Split('.')[1].Length >= total)
+                                                                    //            fila += monto.Split('.')[1].Substring(0, total);
+                                                                    //        else
+                                                                    //            fila += monto.Split('.')[1];
+
+                                                                    //        int falta = total - monto.Split('.')[1].Length;
+
+                                                                    //        for (int j = 0; j < falta; j++)
+                                                                    //            fila += "0";
+
+                                                                    //    }
+                                                                    //    else
+                                                                    //    {
+                                                                    //        fila += ".";
+                                                                    //        for (int j = 0; j < total; j++)
+                                                                    //            fila += "0";
+
+                                                                    //    }
+
+                                                                    //    if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                    //    {
+                                                                    //        int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                    //        for (int j = 0; j < espaciosColumna; j++)
+                                                                    //            fila += " ";
+                                                                    //    }
+                                                                    //}
+
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "AÑO")
+                                                                    {
+                                                                        int total = rowDatos["AÑO"].ToString().Length;
+                                                                        int totalCaracteres = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+                                                                        if (totalCaracteres > 4)
+                                                                        {
+                                                                            MessageBox.Show("Error de formato,el año en la fila del colegiado " + rowDatos["Nombre"].ToString() + " tiene más caracteres que del formato de un año.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                                            return;
+                                                                        }
+
+                                                                        if (total == 4 && totalCaracteres == 2)
+                                                                            fila += rowDatos["AÑO"].ToString().Remove(0, 2);
+                                                                        else
+                                                                            if (total == 4 && totalCaracteres == 4)
+                                                                            fila += rowDatos["AÑO"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "MES")
+                                                                    {
+                                                                        fila += rowDatos["MES"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "CONSTANTE")
+                                                                    {
+                                                                        fila += dtFormatos.Rows[i]["Formato"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "TARJETA")
+                                                                    {
+                                                                        fila += rowDatos["NumeroTarjeta"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "CONSECUTIVO")
+                                                                    {
+                                                                        fila += rowDatos["contador"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "VENCIMIENTO_TARJETA")
+                                                                    {
+                                                                        fila += rowDatos["venc_tarjeta"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "NUMERO_FACTURA")
+                                                                    {
+                                                                        //fila += rowDatos["numFactura"].ToString();
+
+                                                                        //if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        //{
+                                                                        //    int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                        //    for (int j = 0; j < espaciosColumna; j++)
+                                                                        //        fila += " ";
+                                                                        //}
+
+                                                                        if (int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) > rowDatos["numFactura"].ToString().Length)
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()) - rowDatos["numFactura"].ToString().Length;
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+
+                                                                        fila += rowDatos["numFactura"].ToString();
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA")
+                                                                    {
+
+                                                                        fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_FACTURA")
+                                                                    {
+
+                                                                        fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "VENCIMIENTO_FACTURA")
+                                                                    {
+
+                                                                        fila += rowDatos["" + dtFormatos.Rows[i]["Detalle"].ToString() + ""].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_INICIO_MES")
+                                                                    {
+                                                                        fila += rowDatos["mesIni"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    if (dtFormatos.Rows[i]["Macro"].ToString() == "FECHA_FIN_MES")
+                                                                    {
+                                                                        fila += rowDatos["mesFin"].ToString();
+
+                                                                        if (dtFormatos.Rows[i]["TamColumna"].ToString() != "")
+                                                                        {
+                                                                            int espaciosColumna = int.Parse(dtFormatos.Rows[i]["TamColumna"].ToString()) - int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
+
+                                                                            for (int j = 0; j < espaciosColumna; j++)
+                                                                                fila += " ";
+                                                                        }
+                                                                    }
+
+                                                                    i += 1;
+                                                                }
+                                                            }
+
+                                                            File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
+                                                            #endregion
+                                                        }
+                                                        else
+                                                        {
+
 															if (extension == ".csv")
 															{
 																#region CSV
@@ -864,26 +892,7 @@ namespace KOLEGIO
 																			else
 																				fila += SeparadorCsv + rowDatos["Nombre"].ToString();
 
-																			//if (rowDatos["Nombre"].ToString().Length < int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()))
-																			//{
-																			//    if (dtFormatos.Rows[i]["Orden"].ToString() == "1")
-																			//    {
-																			//        fila += rowDatos["Nombre"].ToString();
-																			//    }
-																			//    else
-																			//        fila += SeparadorCsv + rowDatos["Nombre"].ToString();
-
-																			//}
-																			//else
-																			//{
-																			//    if (dtFormatos.Rows[i]["Orden"].ToString() == "1")
-																			//    {
-																			//        fila += rowDatos["Nombre"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																			//    }
-																			//    else
-																			//        fila += SeparadorCsv + rowDatos["Nombre"].ToString().Substring(0, int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString()));
-																			//}
-
+      
 																		}
 
 																		if (dtFormatos.Rows[i]["Macro"].ToString() == "APLICACION")
@@ -991,35 +1000,7 @@ namespace KOLEGIO
 																			}
 																			else
 																				fila += SeparadorCsv + saldo;
-																		}
-
-																		//if (dtFormatos.Rows[i]["Macro"].ToString() == "DECIMALES")
-																		//{
-																		//    int total = int.Parse(dtFormatos.Rows[i]["Caracteres"].ToString());
-																		//    string monto = "";
-																		//    monto = rowDatos["Monto"].ToString();
-																		//    if (monto.Contains("."))
-																		//    {
-																		//        if (monto.Split('.')[1].Length >= total)
-																		//            fila += monto.Split('.')[1].Substring(0, total);
-																		//        else
-																		//            fila += monto.Split('.')[1];
-
-																		//        int falta = total - monto.Split('.')[1].Length;
-
-																		//        for (int j = 0; j < falta; j++)
-																		//            fila += "0";
-
-																		//    }
-																		//    else
-																		//    {
-																		//        fila += ".";
-																		//        for (int j = 0; j < total; j++)
-																		//            fila += "0";
-
-																		//    }
-																		//}
-
+																		}            
 
 																		if (dtFormatos.Rows[i]["Macro"].ToString() == "AÑO")
 																		{
@@ -1170,62 +1151,50 @@ namespace KOLEGIO
 																		i += 1;
 																	}
 																}
-																
+
 																File.AppendAllText(savefile.FileName, fila + Environment.NewLine);
 																#endregion
 															}
-														}
-													}
-													rowIndexExcel += 1;
-												}
+                                                            
+                                                        }
+                                                        rowIndexExcel += 1;
+                                                    }
 
+                                                    if (extension == ".txt")
+                                                    {
+                                                        string fila = "";
+                                                        if (TotalRegistro.Equals("S"))
+                                                        {
+                                                            fila = "TotalRegistros:" + (rowIndex - 1).ToString();
+                                                            File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
+                                                        }
+
+                                                        if (TotalMonto.Equals("S"))
+                                                        {
+                                                            fila = "TotalCuota:" + montoTotal.ToString();
+                                                            File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
+                                                        }
+                                                    }
+
+                                                    if (extension == ".csv")
+                                                    {
+                                                        string fila = "";
+                                                        if (TotalRegistro.Equals("S"))
+                                                        {
+                                                            fila = "TotalRegistros:" + (rowIndex - 1).ToString();
+                                                            File.AppendAllText(savefile.FileName, fila + Environment.NewLine);
+                                                        }
+
+                                                        if (TotalMonto.Equals("S"))
+                                                        {
+                                                            fila = "TotalCuota:" + montoTotal.ToString();
+                                                            File.AppendAllText(savefile.FileName, fila + Environment.NewLine);
+                                                        }
+                                                    }
+
+
+                                                }
 												
-												if (extension == ".txt")
-												{
-													string fila = "";
-													if (TotalRegistro.Equals("S"))
-													{
-														fila = "TotalRegistros:" + (rowIndex - 1).ToString();
-														File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
-													}
-
-													if (TotalMonto.Equals("S"))
-													{
-														fila = "TotalCuota:" + montoTotal.ToString();
-														File.AppendAllText(savefile.FileName, fila + Environment.NewLine, Encoding.Default);
-													}
-												}
-																									
-												if (extension == ".csv")
-												{
-													string fila = "";
-													if (TotalRegistro.Equals("S"))
-													{
-														fila = "TotalRegistros:" + (rowIndex - 1).ToString();
-														File.AppendAllText(savefile.FileName, fila + Environment.NewLine);
-													}
-
-													if (TotalMonto.Equals("S"))
-													{
-														fila = "TotalCuota:" + montoTotal.ToString();
-														File.AppendAllText(savefile.FileName, fila + Environment.NewLine);
-													}
-												}
-													
-												if (extension == ".xls" || extension == ".xlsx")
-												{
-													//oSheet.Name = "PLANTILLA_KOLEGIO";
-													//oSheet.Columns.AutoFit();
-
-
-													Worksheet.Name = "PLANTILLA_KOLEGIO";
-													Worksheet.get_Range((Excell.Range)(Worksheet.Cells[2, 1]), (Excell.Range)(Worksheet.Cells[dtDatos.Rows.Count + 1, dtFormatos.Rows.Count])).Value = Cells;
-													Worksheet.Columns.AutoFit();
-													oBook.SaveAs(savefile.FileName);
-													oBook.Close();
-													Excel.Quit();
-												}
-
 												if (!montoMayorACaracteres)
 												{
 													MessageBox.Show("Se generó el archivo exitosamente!", "Generación Plantilla", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
