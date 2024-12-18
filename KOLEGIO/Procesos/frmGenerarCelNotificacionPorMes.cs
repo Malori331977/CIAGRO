@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using ExcelInterop = Microsoft.Office.Interop.Excel;
+using MSExcel = Microsoft.Office.Interop.Excel;
 
 namespace KOLEGIO
 {
@@ -189,8 +189,10 @@ namespace KOLEGIO
             /*23-07-2024*/
             /*agregar filtro a la consulta para que no muestre debitos*/
             /*t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')*/
+            /*18/12/2024 Se agrega 2 consultas adicionales para traer los pagos realizados por los colegiados 
+             t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')*/
 
-			string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion" +
+            string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion" +
 							" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
 							" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado" +
 							" LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO t3 ON t3.IdColegiado = t1.IdColegiado AND t3.Estado = 'A'" +
@@ -213,12 +215,23 @@ namespace KOLEGIO
 							"	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
 							"	where t2.DOCUMENTO is null and t1.SALDO > 0  AND t1.VENDEDOR in (" + filtroVendedor() + ") AND t1.FECHA <= GETDATE() and t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
 							"	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
-							"	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO) SALDO" +
+                            "   select t1.CLIENTE, cast(year(t1.FECHA) as varchar(4)) + '-' + cast(month(t1.FECHA) as varchar(2)) + '-1' as FECHA, SUM(t1.SALDO*-1) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1 left join (" +
+                            "	select DOCUMENTO from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC where NUM_PARCIALIDADES > 2" +
+                            "	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
+                            "	where t2.DOCUMENTO is null and t1.SALDO > 0  AND t1.VENDEDOR in (" + filtroVendedor() + ") AND t1.FECHA <= GETDATE() and t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+                            "	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
+                            "	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO) SALDO" +
 							"	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
 							"	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
 							"	where t1.SALDO > 0  AND t1.VENDEDOR in (" + filtroVendedor() + ") AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2  AND t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
-							"	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE" +
-							"	) tbMese group by YEAR(FECHA), MONTH(FECHA), CLIENTE) as tb group by CLIENTE )";
+							"	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE union" +
+                            "	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO*-1) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
+                            "	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
+                            "	where t1.SALDO > 0  AND t1.VENDEDOR in (" + filtroVendedor() + ") AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2  AND t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+                            "	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE" +
+                            "	) tbMese group by YEAR(FECHA), MONTH(FECHA), CLIENTE) as tb group by CLIENTE )";
 
 			if (chkEST.Checked)
 				sQuery += sQueryEstables;
@@ -608,10 +621,10 @@ namespace KOLEGIO
 			Cursor.Current = Cursors.WaitCursor;
 			try
 			{
-				ExcelInterop.Application Excel = new ExcelInterop.Application();
+                MSExcel.Application Excel = new MSExcel.Application();
 				Excel.Workbooks.Add();
-				// single worksheet
-				ExcelInterop._Worksheet Worksheet = Excel.ActiveSheet;
+                // single worksheet
+                MSExcel._Worksheet Worksheet = Excel.ActiveSheet;
 
 				//List<string> colFechas = new List<string>();
 
@@ -636,7 +649,7 @@ namespace KOLEGIO
 
 
 
-				ExcelInterop.Range HeaderRange = Worksheet.get_Range((ExcelInterop.Range)(Worksheet.Cells[1, 1]), (ExcelInterop.Range)(Worksheet.Cells[1, columnas + 1]));
+                MSExcel.Range HeaderRange = Worksheet.get_Range((MSExcel.Range)(Worksheet.Cells[1, 1]), (MSExcel.Range)(Worksheet.Cells[1, columnas + 1]));
 				HeaderRange.Value = Header;
 				HeaderRange.Font.Bold = true;
 				HeaderRange.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
@@ -693,14 +706,14 @@ namespace KOLEGIO
 				}
 
 				Worksheet.Name = "Celulares Colegiados Pendientes";
-				Worksheet.get_Range((ExcelInterop.Range)(Worksheet.Cells[2, 1]), (ExcelInterop.Range)(Worksheet.Cells[rows + 1, columnas + 1])).Value = Cells;
+				Worksheet.get_Range((MSExcel.Range)(Worksheet.Cells[2, 1]), (MSExcel.Range)(Worksheet.Cells[rows + 1, columnas + 1])).Value = Cells;
 				Worksheet.Columns.AutoFit();
 
 				//Segundo tab/
 
 				if (!chkEST.Checked && !chkCONSUL.Checked)
 				{
-					ExcelInterop._Worksheet Worksheet2 = Excel.Sheets.Add(After: Excel.Sheets[Excel.Sheets.Count]);
+                    MSExcel._Worksheet Worksheet2 = Excel.Sheets.Add(After: Excel.Sheets[Excel.Sheets.Count]);
 
 					int columnas2 = dgvGestionCobro2.Columns.Count;
 					int rows2 = dgvGestionCobro2.RowCount;
@@ -728,7 +741,7 @@ namespace KOLEGIO
 					}
 
 
-					ExcelInterop.Range HeaderRange2 = Worksheet2.get_Range((ExcelInterop.Range)(Worksheet2.Cells[1, 1]), (ExcelInterop.Range)(Worksheet2.Cells[1, columnas2]));
+                    MSExcel.Range HeaderRange2 = Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[1, 1]), (MSExcel.Range)(Worksheet2.Cells[1, columnas2]));
 					HeaderRange2.Value = Header2;
 					HeaderRange2.Font.Bold = true;
 					HeaderRange2.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
@@ -774,7 +787,7 @@ namespace KOLEGIO
 
 
 					Worksheet2.Name = "Gestion de cobro";
-					Worksheet2.get_Range((ExcelInterop.Range)(Worksheet2.Cells[2, 1]), (ExcelInterop.Range)(Worksheet2.Cells[rows2 + 1, columnas2])).Value = Cells2;
+					Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[2, 1]), (MSExcel.Range)(Worksheet2.Cells[rows2 + 1, columnas2])).Value = Cells2;
 					Worksheet2.Columns.AutoFit();
 
 					//Eliminar columnas que no estan visibles en el dgv
