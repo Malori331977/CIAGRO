@@ -76,6 +76,7 @@
             this.colCelular = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colMeses = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Condicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cobrador = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColegiados)).BeginInit();
             this.grbTipo.SuspendLayout();
@@ -202,7 +203,8 @@
             this.colNombreColegiado,
             this.colCelular,
             this.colMeses,
-            this.Condicion});
+            this.Condicion,
+            this.Cobrador});
             this.dgvColegiados.Location = new System.Drawing.Point(16, 16);
             this.dgvColegiados.Name = "dgvColegiados";
             this.dgvColegiados.ReadOnly = true;
@@ -522,6 +524,12 @@
             this.Condicion.Name = "Condicion";
             this.Condicion.ReadOnly = true;
             // 
+            // Cobrador
+            // 
+            this.Cobrador.HeaderText = "Cobrador";
+            this.Cobrador.Name = "Cobrador";
+            this.Cobrador.ReadOnly = true;
+            // 
             // frmGenerarCelNotificacionPorMes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -606,5 +614,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colCelular;
         private System.Windows.Forms.DataGridViewTextBoxColumn colMeses;
         private System.Windows.Forms.DataGridViewTextBoxColumn Condicion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Cobrador;
     }
 }

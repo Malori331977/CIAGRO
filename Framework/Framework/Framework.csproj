@@ -68,7 +68,8 @@
       <HintPath>..\..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="NetBarControl">
+    <Reference Include="NetBarControl, Version=1.0.9.2012, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dlls\NetBarControl.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">

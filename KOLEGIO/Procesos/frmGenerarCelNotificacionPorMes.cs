@@ -41,6 +41,7 @@ namespace KOLEGIO
 			dtRefrescar.Columns.Add("Monto", typeof(String));
 			dtRefrescar.Columns.Add("Compromiso", typeof(String));
             dtRefrescar.Columns.Add("Condicion", typeof(String));
+            dtRefrescar.Columns.Add("Cobrador", typeof(String));
         }
 
 
@@ -192,12 +193,13 @@ namespace KOLEGIO
             /*18/12/2024 Se agrega 2 consultas adicionales para traer los pagos realizados por los colegiados 
              t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')*/
 
-            string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion" +
+            string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador" +
 							" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
 							" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado" +
 							" LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO t3 ON t3.IdColegiado = t1.IdColegiado AND t3.Estado = 'A'" +
                             " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t4 on t4.CodigoCondicion=t1.Condicion" +
-							" WHERE t2.MESES >= " + txtMeses.Text + "";
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".COBRADOR t5 ON t5.COBRADOR = t1.Cobrador" +
+                            " WHERE t2.MESES >= " + txtMeses.Text + "";
 			string sQueryEstables = " SELECT t1.NumRegistro 'Codigo', t1.CedulaJuridica, t1.Nombre, t1.Email, t1.Telefono, t2.MESES , t2.SALDO" +
 									" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t1" +
 									" JOIN MESES t2 ON t2.CLIENTE = t1.NumRegistro" +
@@ -271,7 +273,8 @@ namespace KOLEGIO
 												 row["MESES"].ToString(), 
 												 decimal.Parse(row["SALDO"].ToString()).ToString("N2"), 
 												 row["Compromiso"].ToString(),
-                                                 row["Condicion"].ToString());
+                                                 row["Condicion"].ToString(),
+                                                 row["Cobrador"].ToString());
 										         
 						}
 
@@ -294,35 +297,12 @@ namespace KOLEGIO
 		private void refrescarDatosTotal()
 		{
 
-			//////string sQuery = "select t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t1.TelefonoCelular, COUNT(t2.DOCUMENTO) Meses from " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
-			//////        " join " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t2 on t2.CLIENTE = t1.IdColegiado" +
-			//////        " where t2.SALDO > 0 and(t2.TIPO = 'FAC' or(t2.TIPO = 'O/D' and t2.SUBTIPO = '176'))" +
-			//////        " group by t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t1.TelefonoCelular";
-
-			////string sQuery = "select t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t1.TelefonoCelular," +
-			////        " (select  COUNT(*) from(" +
-			////        " select YEAR(FECHA_DOCUMENTO) año, MONTH(FECHA_DOCUMENTO) mes from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC" +
-			////        " where CLIENTE = t1.IdColegiado and SALDO > 0 and(TIPO = 'FAC' or(TIPO = 'O/D' and SUBTIPO = '176')) and CONVERT(date, FECHA) <= CONVERT(date, GETDATE())" +
-			////        " group by YEAR(FECHA_DOCUMENTO), MONTH(FECHA_DOCUMENTO)" +
-			////        " ) as tabla_meses) Meses" +
-			////        " from " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1 join " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t2 on t2.CLIENTE = t1.IdColegiado" +
-			////        " where t2.SALDO > 0 and(t2.TIPO = 'FAC' or(t2.TIPO = 'O/D' and t2.SUBTIPO = '176'))" +
-			////        " group by t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t1.TelefonoCelular";
-			//string sQuery = " WITH MESES AS" +
-			//				" (select COUNT(*) AS 'MESES', SUM(SALDO) SALDO, CLIENTE  from(" +
-			//				"     select CLIENTE, cast(year(FECHA) as varchar(4)) + '-' + cast(month(FECHA) as varchar(2)) as MES, SUM(SALDO) SALDO" +
-			//				"     from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC" +
-			//				"     where SALDO > 0  AND VENDEDOR in (" + filtroVendedor() + ") AND FECHA <= GETDATE()" +
-			//				"     group by YEAR(fecha), MONTH(fecha), CLIENTE) as tb group by CLIENTE" +
-			//				" )" +
-			//				" SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO" +
-			//				" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
-			//				" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado";
-			string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion" +
+			string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador" +
 							" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
 							" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado" +
 							" LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO t3 ON t3.IdColegiado = t1.IdColegiado AND t3.Estado = 'A'" + 
-							" JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t4 on t4.CodigoCondicion=t1.Condicion";
+							" JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t4 on t4.CodigoCondicion=t1.Condicion " +
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".COBRADOR t5 ON t5.COBRADOR = t1.Cobrador";
 
 			string fltVendedor = filtroVendedor() == "" ? "" : " AND t1.VENDEDOR in (" + filtroVendedor() + ")";
 
@@ -333,30 +313,55 @@ namespace KOLEGIO
 			string sQueryConsul = " SELECT t1.Codigo, t1.CedulaJuridica, t1.Nombre, t1.Email, t1.Telefono, t2.MESES , t2.SALDO" +
 								" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_CONSULTORAS t1" +
 								" JOIN MESES t2 ON t2.CLIENTE = t1.Codigo";
-			string sQuery = " WITH MESES AS" +
-							  " (select COUNT(*) AS 'MESES', SUM(SALDO) SALDO, CLIENTE  from (" +
-							//"     select CLIENTE, cast(year(FECHA) as varchar(4)) + '-' + cast(month(FECHA) as varchar(2)) as MES, SUM(SALDO) SALDO" +
-							//"     from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC" +
-							//"     where SALDO > 0  AND VENDEDOR in (" + filtroVendedor() + ") AND FECHA <= GETDATE()" +
-							//"     group by YEAR(fecha), MONTH(fecha), CLIENTE) as tb group by CLIENTE" +
-							//" )";
-							"select CLIENTE, cast(year(FECHA) as varchar(4)) + '-' + cast(month(FECHA) as varchar(2)) as MES, SUM(SALDO) SALDO" +
-							"	from(select t1.CLIENTE, cast(year(t1.FECHA) as varchar(4)) + '-' + cast(month(t1.FECHA) as varchar(2)) + '-1' as FECHA, SUM(t1.SALDO) SALDO" +
-							"	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1 left join (" +
-							"	select DOCUMENTO from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC where NUM_PARCIALIDADES > 2" +
-							"	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
-                            "	where t2.DOCUMENTO is null and t1.SALDO > 0 " + fltVendedor +
+			//string sQuery = " WITH MESES AS" +
+			//				  " (select COUNT(*) AS 'MESES', SUM(SALDO) SALDO, CLIENTE  from (" +
+			//				"select CLIENTE, cast(year(FECHA) as varchar(4)) + '-' + cast(month(FECHA) as varchar(2)) as MES, SUM(SALDO) SALDO" +
+			//				"	from(select t1.CLIENTE, cast(year(t1.FECHA) as varchar(4)) + '-' + cast(month(t1.FECHA) as varchar(2)) + '-1' as FECHA, SUM(t1.SALDO) SALDO" +
+			//				"	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1 left join (" +
+			//				"	select DOCUMENTO from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC where NUM_PARCIALIDADES > 2" +
+			//				"	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
+   //                         "	where t2.DOCUMENTO is null and t1.SALDO > 0 " + fltVendedor +
+			//				"   AND t1.FECHA <= GETDATE() and t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+			//				"	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
+			//				"	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO) SALDO" +
+			//				"	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
+			//				"	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
+			//				"	where t1.SALDO > 0" + fltVendedor + 
+			//				"   AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2 and t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+			//				"	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE" +
+			//				"	) tbMese group by YEAR(FECHA), MONTH(FECHA), CLIENTE) as tb group by CLIENTE )";
+            string sQuery = " WITH MESES AS" +
+                            " (select COUNT(*) AS 'MESES', SUM(SALDO) SALDO, CLIENTE  from(" +
+                            "select CLIENTE, cast(year(FECHA) as varchar(4)) + '-' + cast(month(FECHA) as varchar(2)) as MES, SUM(SALDO) SALDO" +
+                            "	from(select t1.CLIENTE, cast(year(t1.FECHA) as varchar(4)) + '-' + cast(month(t1.FECHA) as varchar(2)) + '-1' as FECHA, SUM(t1.SALDO) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1 left join (" +
+                            "	select DOCUMENTO from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC where NUM_PARCIALIDADES > 2" +
+                            "	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
+                            "	where t2.DOCUMENTO is null and t1.SALDO > 0 " + fltVendedor + 
 							"   AND t1.FECHA <= GETDATE() and t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
-							"	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
-							"	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO) SALDO" +
-							"	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
-							"	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
-							"	where t1.SALDO > 0" + fltVendedor + 
-							"   AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2 and t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
-							"	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE" +
-							"	) tbMese group by YEAR(FECHA), MONTH(FECHA), CLIENTE) as tb group by CLIENTE )";
+                            "	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
+                            "   select t1.CLIENTE, cast(year(t1.FECHA) as varchar(4)) + '-' + cast(month(t1.FECHA) as varchar(2)) + '-1' as FECHA, SUM(t1.SALDO*-1) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1 left join (" +
+                            "	select DOCUMENTO from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC where NUM_PARCIALIDADES > 2" +
+                            "	) t2 on t2.DOCUMENTO = t1.DOCUMENTO" +
+                            "	where t2.DOCUMENTO is null and t1.SALDO > 0 " + fltVendedor + 
+							"   AND t1.FECHA <= GETDATE() and t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+                            "	group by YEAR(t1.FECHA), MONTH(t1.FECHA), t1.CLIENTE union " +
+                            "	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
+                            "	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
+                            "	where t1.SALDO > 0  " + fltVendedor + 
+                            "   AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2  AND t1.TIPO in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+                            "	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE union" +
+                            "	select t1.CLIENTE, cast(year(t2.FECHA_RIGE) as varchar(4)) + '-' + cast(month(t2.FECHA_RIGE) as varchar(2)) + '-1' as FECHA, SUM(t2.SALDO*-1) SALDO" +
+                            "	from " + Consultas.sqlCon.COMPAÑIA + ".DOCUMENTOS_CC t1" +
+                            "	join " + Consultas.sqlCon.COMPAÑIA + ".PARCIALIDADES_CC t2 on t2.DOCUMENTO_ORIGEN = t1.DOCUMENTO" +
+                            "	where t1.SALDO > 0 " + fltVendedor + 
+							"   AND t2.FECHA_RIGE <= GETDATE() AND t2.SALDO > 0 and NUM_PARCIALIDADES > 2  AND t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')" +
+                            "	group by YEAR(t2.FECHA_RIGE), MONTH(t2.FECHA_RIGE), t1.CLIENTE" +
+                            "	) tbMese group by YEAR(FECHA), MONTH(FECHA), CLIENTE) as tb group by CLIENTE )";
 
-			if (chkEST.Checked)
+            if (chkEST.Checked)
 				sQuery += sQueryEstables;
 			else if (chkCONSUL.Checked)
 				sQuery += sQueryConsul;
@@ -396,7 +401,7 @@ namespace KOLEGIO
 						else
 						{
 							dtRefrescar.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(), string.Empty, string.Empty,
-							row["Nombre"].ToString(), row["Email"].ToString(), row["TelefonoCelular"].ToString(), row["MESES"].ToString(), decimal.Parse(row["SALDO"].ToString()).ToString("N2"), row["COMPROMISO"].ToString(), row["CONDICION"].ToString());
+							row["Nombre"].ToString(), row["Email"].ToString(), row["TelefonoCelular"].ToString(), row["MESES"].ToString(), decimal.Parse(row["SALDO"].ToString()).ToString("N2"), row["Compromiso"].ToString(), row["Condicion"].ToString(), row["Cobrador"].ToString());
 						}
 					}
 					lblRegistrosCant.Text = totalRegistros.ToString();
@@ -423,7 +428,8 @@ namespace KOLEGIO
 						dgvColegiados.Columns["Nº Colegiado"].Visible = true;
 						dgvColegiados.Columns["Compromiso"].Visible = true;
                         dgvColegiados.Columns["Condicion"].Visible = true;
-                        
+                        dgvColegiados.Columns["Cobrador"].Visible = true;
+
                     }
 					dgvColegiados.AutoResizeColumns();
 					dgvColegiados.Refresh();
@@ -453,6 +459,7 @@ namespace KOLEGIO
 				dgvColegiados.Columns["Cédula Jurídica"].Visible = true;
 				dgvColegiados.Columns["Código"].Visible = true;
                 dgvColegiados.Columns["Condicion"].Visible = false;
+                dgvColegiados.Columns["Cobrador"].Visible = false;
             }
 			else
 			{
@@ -465,6 +472,7 @@ namespace KOLEGIO
 				dgvColegiados.Columns["Nº Colegiado"].Visible = true;
 				dgvColegiados.Columns["Compromiso"].Visible = true;
                 dgvColegiados.Columns["Condicion"].Visible = true;
+                dgvColegiados.Columns["Cobrador"].Visible = true;
             }
 			//dgvColegiados.AutoResizeColumns();
 			dgvColegiados.Refresh();
@@ -715,7 +723,25 @@ namespace KOLEGIO
 				{
                     MSExcel._Worksheet Worksheet2 = Excel.Sheets.Add(After: Excel.Sheets[Excel.Sheets.Count]);
 
-					int columnas2 = dgvGestionCobro2.Columns.Count;
+     //               DataTable dt = new DataTable();
+     //               string error = "";
+     //               string query = "";
+					////DataGridView dataGridViewGC = new DataGridView();
+
+     //               query = "select Id, IdColegiado, Medio, FechaGestion, Compromiso, FechaCompromiso, Observaciones, Estado from " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO";
+
+     //               if (Consultas.fillDataTable(query, ref dt, ref error))
+     //               {
+     //                   //dgvDetalle.Rows.Clear();
+     //                   foreach (DataRow row in dt.Rows)
+     //                   {
+     //                       dataGridViewGC.Rows.Add(row["Id"].ToString(), row["IdColegiado"].ToString(), row["Medio"].ToString(), row["FechaGestion"].ToString() != "" ? DateTime.Parse(row["FechaGestion"].ToString()).ToString("dd/MM/yyyy") : "", row["Compromiso"].ToString(), row["FechaCompromiso"].ToString() != "" ? DateTime.Parse(row["FechaCompromiso"].ToString()).ToString("dd/MM/yyyy") : "", row["Observaciones"].ToString(), fInternas.obtenerEstadoGestionCobro(row["Estado"].ToString()));
+     //                   }
+     //               }
+                    
+
+
+                    int columnas2 = dgvGestionCobro2.Columns.Count;
 					int rows2 = dgvGestionCobro2.RowCount;
 					object[] Header2 = new object[columnas2];
 
