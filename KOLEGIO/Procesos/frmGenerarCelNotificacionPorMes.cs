@@ -723,109 +723,107 @@ namespace KOLEGIO
 				{
                     MSExcel._Worksheet Worksheet2 = Excel.Sheets.Add(After: Excel.Sheets[Excel.Sheets.Count]);
 
-     //               DataTable dt = new DataTable();
-     //               string error = "";
-     //               string query = "";
-					////DataGridView dataGridViewGC = new DataGridView();
+					DataTable dt = new DataTable();
+                    DataGridView dataGridViewGC = new DataGridView();
 
-     //               query = "select Id, IdColegiado, Medio, FechaGestion, Compromiso, FechaCompromiso, Observaciones, Estado from " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO";
+                    if (dgvColegiados.Rows.Count > 0)
+                    {
+                        foreach (DataGridViewRow row in dgvColegiados.Rows)
+                        {
+                            if (row.Cells["Compromiso"].Value.ToString() == "Si")
+                            {
+                                string error = "";
+                                string query = "";
 
-     //               if (Consultas.fillDataTable(query, ref dt, ref error))
-     //               {
-     //                   //dgvDetalle.Rows.Clear();
-     //                   foreach (DataRow row in dt.Rows)
-     //                   {
-     //                       dataGridViewGC.Rows.Add(row["Id"].ToString(), row["IdColegiado"].ToString(), row["Medio"].ToString(), row["FechaGestion"].ToString() != "" ? DateTime.Parse(row["FechaGestion"].ToString()).ToString("dd/MM/yyyy") : "", row["Compromiso"].ToString(), row["FechaCompromiso"].ToString() != "" ? DateTime.Parse(row["FechaCompromiso"].ToString()).ToString("dd/MM/yyyy") : "", row["Observaciones"].ToString(), fInternas.obtenerEstadoGestionCobro(row["Estado"].ToString()));
-     //                   }
-     //               }
-                    
+                                query = "select Id, IdColegiado, Medio, FechaGestion, Compromiso, FechaCompromiso, Observaciones, Estado from " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO where IdColegiado = '" + row.Cells["IdColegiado"].Value.ToString() + "'";
 
+                                if (Consultas.fillDataTable(query, ref dt, ref error))
+                                {
+                                    
+                                    foreach (DataRow rowGC in dt.Rows)
+                                    {
+                                        dataGridViewGC.Rows.Add(rowGC["Id"].ToString(), rowGC["IdColegiado"].ToString(), rowGC["Medio"].ToString(), rowGC["FechaGestion"].ToString() != "" ? DateTime.Parse(rowGC["FechaGestion"].ToString()).ToString("dd/MM/yyyy") : "", rowGC["Compromiso"].ToString(), rowGC["FechaCompromiso"].ToString() != "" ? DateTime.Parse(rowGC["FechaCompromiso"].ToString()).ToString("dd/MM/yyyy") : "", rowGC["Observaciones"].ToString(), fInternas.obtenerEstadoGestionCobro(rowGC["Estado"].ToString()));
+                                    }
+                                }
 
-                    int columnas2 = dgvGestionCobro2.Columns.Count;
-					int rows2 = dgvGestionCobro2.RowCount;
-					object[] Header2 = new object[columnas2];
+                            }
+                            
+                        }
 
-					List<int> ColumnasNoVisibles = new List<int>();
-					List<string> colFechas = new List<string>();
+                        int columnas2 = dataGridViewGC.Columns.Count;
+                        int rows2 = dataGridViewGC.RowCount;
+                        object[] Header2 = new object[columnas2];
 
-					colFechas.Add("colFechaCompromiso");
-					colFechas.Add("colFecha");
+                        List<int> ColumnasNoVisibles = new List<int>();
+                        List<string> colFechas = new List<string>();
 
-					// column headings               
-					for (int i = 0; i < columnas2; i++)
-					{
-						////if (dgvColegiados.Columns[i].HeaderText != "Detalle Carga" && dgvPolizas.Columns[i].HeaderText != "F17")
-						//if (i == columnas2)
-						//	Header[i] = "Formato celular";
-						//else
-						//Header2[i] = dgvGestionCobro2.Columns[i].HeaderText;
+                        colFechas.Add("colFechaCompromiso");
+                        colFechas.Add("colFecha");
 
-						if (dgvGestionCobro2.Columns[i].Visible == true)
-							Header2[i] = dgvGestionCobro2.Columns[i].HeaderText;
-						else
-							ColumnasNoVisibles.Add(i + 1);
-					}
-
-
-                    MSExcel.Range HeaderRange2 = Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[1, 1]), (MSExcel.Range)(Worksheet2.Cells[1, columnas2]));
-					HeaderRange2.Value = Header2;
-					HeaderRange2.Font.Bold = true;
-					HeaderRange2.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
-
-					// DataCells
-
-					object[,] Cells2 = new object[rows2, columnas2];
-					bool fecha = false;
-					for (int j = 0; j < rows2; j++)
-					{
-						for (int i = 0; i < columnas2; i++)
-						{
-
-							fecha = false;
-							for (int k = 0; k < colFechas.Count; k++)
-							{
-								if (dgvGestionCobro2.Columns[i].HeaderText == colFechas[k])
-								{
-									if (dgvGestionCobro2[i, j].Value.ToString() != "")
-										Cells2[j, i] = DateTime.Parse(dgvGestionCobro2[i, j].Value.ToString()).ToString("yyyy-MM-dd");
-									else
-										Cells2[j, i] = "";
-									fecha = true;
-									break;
-								}
-							}
-
-							if (!fecha && dgvGestionCobro2.Columns[i].Visible == true)
-							{
-								if (dgvGestionCobro2[i, j].Value != null)
-									Cells2[j, i] = dgvGestionCobro2[i, j].Value.ToString();
-								else
-									Cells2[j, i] = "";
-							}
-
-						}
-						//string cel = dgvColegiados[columnas - 3, j].Value.ToString();
-						//if (depurarCelular(ref cel))
-						//	Cells[j, columnas] = "Correcto";
-						//else
-						//	Cells[j, columnas] = "Incorrecto";
-					}
+                        // column headings               
+                        for (int i = 0; i < columnas2; i++)
+                        {
+                            if (dataGridViewGC.Columns[i].Visible == true)
+                                Header2[i] = dgvGestionCobro2.Columns[i].HeaderText;
+                            else
+                                ColumnasNoVisibles.Add(i + 1);
+                        }
 
 
-					Worksheet2.Name = "Gestion de cobro";
-					Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[2, 1]), (MSExcel.Range)(Worksheet2.Cells[rows2 + 1, columnas2])).Value = Cells2;
-					Worksheet2.Columns.AutoFit();
+                        MSExcel.Range HeaderRange2 = Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[1, 1]), (MSExcel.Range)(Worksheet2.Cells[1, columnas2]));
+                        HeaderRange2.Value = Header2;
+                        HeaderRange2.Font.Bold = true;
+                        HeaderRange2.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
 
-					//Eliminar columnas que no estan visibles en el dgv
-					int cont = 0;
-					foreach (int column in ColumnasNoVisibles)
-					{
-						if (cont == 0)
-							Worksheet2.Columns[column].Delete();
-						else
-							Worksheet2.Columns[column - cont].Delete();
-						cont++;
-					}
+                        // DataCells
+
+                        object[,] Cells2 = new object[rows2, columnas2];
+                        bool fecha = false;
+                        for (int j = 0; j < rows2; j++)
+                        {
+                            for (int i = 0; i < columnas2; i++)
+                            {
+
+                                fecha = false;
+                                for (int k = 0; k < colFechas.Count; k++)
+                                {
+                                    if (dataGridViewGC.Columns[i].HeaderText == colFechas[k])
+                                    {
+                                        if (dataGridViewGC[i, j].Value.ToString() != "")
+                                            Cells2[j, i] = DateTime.Parse(dataGridViewGC[i, j].Value.ToString()).ToString("yyyy-MM-dd");
+                                        else
+                                            Cells2[j, i] = "";
+                                        fecha = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!fecha && dataGridViewGC.Columns[i].Visible == true)
+                                {
+                                    if (dataGridViewGC[i, j].Value != null)
+                                        Cells2[j, i] = dataGridViewGC[i, j].Value.ToString();
+                                    else
+                                        Cells2[j, i] = "";
+                                }
+                            }
+                        }
+
+
+                        Worksheet2.Name = "Gestion de cobro";
+                        Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[2, 1]), (MSExcel.Range)(Worksheet2.Cells[rows2 + 1, columnas2])).Value = Cells2;
+                        Worksheet2.Columns.AutoFit();
+
+                        //Eliminar columnas que no estan visibles en el dgv
+                        int cont = 0;
+                        foreach (int column in ColumnasNoVisibles)
+                        {
+                            if (cont == 0)
+                                Worksheet2.Columns[column].Delete();
+                            else
+                                Worksheet2.Columns[column - cont].Delete();
+                            cont++;
+                        }
+                    }    
 				}
 
 				Excel.Visible = true;
