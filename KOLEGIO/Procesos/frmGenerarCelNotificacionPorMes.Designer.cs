@@ -77,6 +77,9 @@
             this.colMeses = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Condicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Cobrador = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FechaIncorporacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Provincia = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Canton = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColegiados)).BeginInit();
             this.grbTipo.SuspendLayout();
@@ -204,7 +207,10 @@
             this.colCelular,
             this.colMeses,
             this.Condicion,
-            this.Cobrador});
+            this.Cobrador,
+            this.FechaIncorporacion,
+            this.Provincia,
+            this.Canton});
             this.dgvColegiados.Location = new System.Drawing.Point(16, 16);
             this.dgvColegiados.Name = "dgvColegiados";
             this.dgvColegiados.ReadOnly = true;
@@ -530,6 +536,24 @@
             this.Cobrador.Name = "Cobrador";
             this.Cobrador.ReadOnly = true;
             // 
+            // FechaIncorporacion
+            // 
+            this.FechaIncorporacion.HeaderText = "Fecha Incorporación";
+            this.FechaIncorporacion.Name = "FechaIncorporacion";
+            this.FechaIncorporacion.ReadOnly = true;
+            // 
+            // Provincia
+            // 
+            this.Provincia.HeaderText = "Provincia";
+            this.Provincia.Name = "Provincia";
+            this.Provincia.ReadOnly = true;
+            // 
+            // Canton
+            // 
+            this.Canton.HeaderText = "Cantón";
+            this.Canton.Name = "Canton";
+            this.Canton.ReadOnly = true;
+            // 
             // frmGenerarCelNotificacionPorMes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -615,5 +639,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colMeses;
         private System.Windows.Forms.DataGridViewTextBoxColumn Condicion;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cobrador;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FechaIncorporacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Provincia;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Canton;
     }
 }

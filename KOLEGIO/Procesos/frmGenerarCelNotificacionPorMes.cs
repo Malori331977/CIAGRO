@@ -42,6 +42,9 @@ namespace KOLEGIO
 			dtRefrescar.Columns.Add("Compromiso", typeof(String));
             dtRefrescar.Columns.Add("Condicion", typeof(String));
             dtRefrescar.Columns.Add("Cobrador", typeof(String));
+            dtRefrescar.Columns.Add("Fecha Incorporación", typeof(String));
+            dtRefrescar.Columns.Add("Provincia", typeof(String));
+            dtRefrescar.Columns.Add("Cantón", typeof(String));
         }
 
 
@@ -193,12 +196,14 @@ namespace KOLEGIO
             /*18/12/2024 Se agrega 2 consultas adicionales para traer los pagos realizados por los colegiados 
              t1.TIPO not in ('FAC','I/C','INT','L/C','N/D','O/D')*/
 
-            string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador" +
+            string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador, t1.FechaIngreso as FechaIncorporacion, t6.NOMBRE as Provincia, t7.NOMBRE as Canton" +
 							" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
 							" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado" +
 							" LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO t3 ON t3.IdColegiado = t1.IdColegiado AND t3.Estado = 'A'" +
                             " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t4 on t4.CodigoCondicion=t1.Condicion" +
                             " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".COBRADOR t5 ON t5.COBRADOR = t1.Cobrador" +
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".DIVISION_GEOGRAFICA1 t6 ON t6.DIVISION_GEOGRAFICA1 = t1.Provincia" +
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".DIVISION_GEOGRAFICA2 t7 ON t7.DIVISION_GEOGRAFICA1 = t1.Provincia and t7.DIVISION_GEOGRAFICA2 = t1.Canton" +
                             " WHERE t2.MESES >= " + txtMeses.Text + "";
 			string sQueryEstables = " SELECT t1.NumRegistro 'Codigo', t1.CedulaJuridica, t1.Nombre, t1.Email, t1.Telefono, t2.MESES , t2.SALDO" +
 									" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t1" +
@@ -274,7 +279,10 @@ namespace KOLEGIO
 												 decimal.Parse(row["SALDO"].ToString()).ToString("N2"), 
 												 row["Compromiso"].ToString(),
                                                  row["Condicion"].ToString(),
-                                                 row["Cobrador"].ToString());
+                                                 row["Cobrador"].ToString(),
+                                                 row["FechaIncorporacion"].ToString(),
+                                                 row["Provincia"].ToString(),
+                                                 row["Canton"].ToString());
 										         
 						}
 
@@ -297,12 +305,14 @@ namespace KOLEGIO
 		private void refrescarDatosTotal()
 		{
 
-			string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador" +
+			string sQueryColegiados = " SELECT t1.IdColegiado, t1.NumeroColegiado, t1.Nombre, t1.Email, t1.TelefonoCelular, t2.MESES , t2.SALDO, CASE WHEN t3.Estado = 'A' THEN 'Si' ELSE 'No' END Compromiso, t4.NombreCondicion as Condicion, isnull(T5.NOMBRE,'') AS Cobrador, t1.FechaIngreso as FechaIncorporacion, t6.NOMBRE as Provincia, t7.NOMBRE as Canton" +
 							" FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
 							" JOIN MESES t2 ON t2.CLIENTE = t1.IdColegiado" +
 							" LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO t3 ON t3.IdColegiado = t1.IdColegiado AND t3.Estado = 'A'" + 
 							" JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t4 on t4.CodigoCondicion=t1.Condicion " +
-                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".COBRADOR t5 ON t5.COBRADOR = t1.Cobrador";
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".COBRADOR t5 ON t5.COBRADOR = t1.Cobrador" +
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".DIVISION_GEOGRAFICA1 t6 ON t6.DIVISION_GEOGRAFICA1 = t1.Provincia" +
+                            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".DIVISION_GEOGRAFICA2 t7 ON t7.DIVISION_GEOGRAFICA1 = t1.Provincia and t7.DIVISION_GEOGRAFICA2 = t1.Canton";
 
 			string fltVendedor = filtroVendedor() == "" ? "" : " AND t1.VENDEDOR in (" + filtroVendedor() + ")";
 
@@ -401,7 +411,9 @@ namespace KOLEGIO
 						else
 						{
 							dtRefrescar.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(), string.Empty, string.Empty,
-							row["Nombre"].ToString(), row["Email"].ToString(), row["TelefonoCelular"].ToString(), row["MESES"].ToString(), decimal.Parse(row["SALDO"].ToString()).ToString("N2"), row["Compromiso"].ToString(), row["Condicion"].ToString(), row["Cobrador"].ToString());
+								row["Nombre"].ToString(), row["Email"].ToString(), row["TelefonoCelular"].ToString(), row["MESES"].ToString(), 
+								decimal.Parse(row["SALDO"].ToString()).ToString("N2"), row["Compromiso"].ToString(), row["Condicion"].ToString(), 
+								row["Cobrador"].ToString(), row["FechaIncorporacion"].ToString(),row["Provincia"].ToString(),row["Canton"].ToString());
 						}
 					}
 					lblRegistrosCant.Text = totalRegistros.ToString();
@@ -429,6 +441,9 @@ namespace KOLEGIO
 						dgvColegiados.Columns["Compromiso"].Visible = true;
                         dgvColegiados.Columns["Condicion"].Visible = true;
                         dgvColegiados.Columns["Cobrador"].Visible = true;
+                        dgvColegiados.Columns["Fecha Incorporación"].Visible = true;
+                        dgvColegiados.Columns["Provincia"].Visible = true;
+                        dgvColegiados.Columns["Cantón"].Visible = true;
 
                     }
 					dgvColegiados.AutoResizeColumns();
@@ -460,6 +475,9 @@ namespace KOLEGIO
 				dgvColegiados.Columns["Código"].Visible = true;
                 dgvColegiados.Columns["Condicion"].Visible = false;
                 dgvColegiados.Columns["Cobrador"].Visible = false;
+                dgvColegiados.Columns["Fecha Incorporación"].Visible = false;
+                dgvColegiados.Columns["Provincia"].Visible = false;
+                dgvColegiados.Columns["Cantón"].Visible = false;
             }
 			else
 			{
@@ -473,6 +491,9 @@ namespace KOLEGIO
 				dgvColegiados.Columns["Compromiso"].Visible = true;
                 dgvColegiados.Columns["Condicion"].Visible = true;
                 dgvColegiados.Columns["Cobrador"].Visible = true;
+                dgvColegiados.Columns["Fecha Incorporación"].Visible = true;
+                dgvColegiados.Columns["Provincia"].Visible = true;
+                dgvColegiados.Columns["Cantón"].Visible = true;
             }
 			//dgvColegiados.AutoResizeColumns();
 			dgvColegiados.Refresh();
@@ -725,7 +746,8 @@ namespace KOLEGIO
 
 					DataTable dt = new DataTable();
                     DataGridView dataGridViewGC = new DataGridView();
-
+					dataGridViewGC = dgvGestionCobro2;
+                    dataGridViewGC.Rows.Clear();
                     if (dgvColegiados.Rows.Count > 0)
                     {
                         foreach (DataGridViewRow row in dgvColegiados.Rows)
@@ -735,7 +757,7 @@ namespace KOLEGIO
                                 string error = "";
                                 string query = "";
 
-                                query = "select Id, IdColegiado, Medio, FechaGestion, Compromiso, FechaCompromiso, Observaciones, Estado from " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO where IdColegiado = '" + row.Cells["IdColegiado"].Value.ToString() + "'";
+                                query = "select Id, IdColegiado, Medio, FechaGestion, Compromiso, FechaCompromiso, Observaciones, Estado from " + Consultas.sqlCon.COMPAÑIA + ".NV_GESTION_COBRO where IdColegiado = '" + row.Cells["Id Colegiado"].Value.ToString() + "'";
 
                                 if (Consultas.fillDataTable(query, ref dt, ref error))
                                 {
@@ -807,7 +829,7 @@ namespace KOLEGIO
                                 }
                             }
                         }
-
+                        dataGridViewGC.Rows.Clear();
 
                         Worksheet2.Name = "Gestion de cobro";
                         Worksheet2.get_Range((MSExcel.Range)(Worksheet2.Cells[2, 1]), (MSExcel.Range)(Worksheet2.Cells[rows2 + 1, columnas2])).Value = Cells2;
