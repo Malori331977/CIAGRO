@@ -103,10 +103,10 @@ namespace KOLEGIO
 					if (!dtCliente.Rows[0]["Pais"].ToString().Equals(""))
 						parametros.Add("@PAIS," + dtCliente.Rows[0]["Pais"].ToString());
 					else
-						parametros.Add("@PAIS," + "ND");
+						parametros.Add("@PAIS," + "CRI");
 				}
 				else
-					parametros.Add("@PAIS," + "ND");
+					parametros.Add("@PAIS," + "CRI");
 
 				if (idCreacionCliente == "colegiado")
 				{

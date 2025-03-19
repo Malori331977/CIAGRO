@@ -1,4 +1,5 @@
 ﻿using Framework;
+using KOLEGIO.Edicion;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -93,7 +94,13 @@ namespace KOLEGIO
 			{
 				btnProcesar.Visible = true;
 			}
-		}
+
+            if (txtNumeColegiado.Valor == "ND")
+            {
+                btnSuspension.Visible = false;
+                dgvSuspensiones.Visible = false;
+            }
+        }
 
 		private void Grados()
 		{
@@ -551,7 +558,21 @@ namespace KOLEGIO
 						cargarHistorialCambioCondicion();
 						cargarVidaSilvestreR();
 						verificarCanones();
-					}
+
+						if (txtNumeColegiado.Valor == "ND")
+						{
+                            btnSuspension.Visible = false;
+                            dgvSuspensiones.Visible = false;
+                        }
+						else
+						{
+							btnSuspension.Visible = true;
+							dgvSuspensiones.Visible = true;
+                            cargarSuspensiones();
+                        }
+						
+
+                    }
 				}
 				else
 				{
@@ -3623,10 +3644,12 @@ namespace KOLEGIO
 			{
 				if (dtFechaModDireccion.Rows.Count > 0)
 				{
-					dtpFechaModDireccion.Value = DateTime.Parse(dtFechaModDireccion.Rows[0]["Fechahora"].ToString());
+                    lblModificaDireccion.Visible = true;
+                    dtpFechaModDireccion.Value = DateTime.Parse(dtFechaModDireccion.Rows[0]["Fechahora"].ToString());
 				}
 				else
 				{
+					lblModificaDireccion.Visible = false;
 					dtpFechaModDireccion.Visible = false;
 				}
 			}
@@ -8948,5 +8971,52 @@ namespace KOLEGIO
 				}
 		}
 
-	}
+        private void btnSuspension_Click(object sender, EventArgs e)
+        {
+            if (Consultas.tienePrivilegios(Consultas.Usuario, Constantes.COLEGIADOS_EDITAR))
+            {
+                if (Utilitario.BuscaForm("frmSuspension"))
+                {
+                    frmSuspension frm = new frmSuspension(txtIdColegiado.Valor, Usu);
+                    frm.ShowDialog();
+					cargarSuspensiones();
+
+                }
+            }
+            else
+                MessageBox.Show("No tiene privilegios suficientes para acceder a esta opción.", "KOLEGIO Privilegios", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+
+        }
+
+        private void cargarSuspensiones()
+        {
+            DataTable dt = new DataTable();
+            Listado listA = new Listado();
+            listA.COLUMNAS = "IdRegsitro, IdColegiado, TipoSuspension, NumeroResolucion, FechaInicio, FechaFinal, UsuarioCreacionAdmin, FechaCreacionAdmin";
+            listA.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
+            listA.TABLA = "NV_COLEGIADO_SUSPENSIONES";
+            listA.FILTRO = "where IdColegiado = '" + txtIdColegiado.Valor + "'";
+
+            if (Consultas.listarDatos(listA, ref dt, ref error))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    dgvSuspensiones.Rows.Clear();
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        dgvSuspensiones.Rows.Add(
+							r["TipoSuspension"].ToString(), 
+							r["NumeroResolucion"].ToString(), 
+							DateTime.Parse(r["FechaInicio"].ToString()).ToString("dd/MM/yyyy"), 
+							DateTime.Parse(r["FechaFinal"].ToString()).ToString("dd/MM/yyyy"), 
+							r["UsuarioCreacionAdmin"].ToString(), 
+							DateTime.Parse(r["FechaCreacionAdmin"].ToString()).ToString("dd/MM/yyyy"));
+                    }
+                }
+            }
+            else
+                MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+    }
 }

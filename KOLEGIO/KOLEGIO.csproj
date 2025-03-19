@@ -177,6 +177,12 @@
     <Compile Include="Edicion\frmRegistroActividadesEdicion.Designer.cs">
       <DependentUpon>frmRegistroActividadesEdicion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Edicion\frmSuspension.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edicion\frmSuspension.Designer.cs">
+      <DependentUpon>frmSuspension.cs</DependentUpon>
+    </Compile>
     <Compile Include="Edicion\frmVidaSilvestreEdicion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -748,6 +754,9 @@
     <EmbeddedResource Include="Edicion\frmRegistroActividadesEdicion.resx">
       <DependentUpon>frmRegistroActividadesEdicion.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Edicion\frmSuspension.resx">
+      <DependentUpon>frmSuspension.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Edicion\frmVidaSilvestreEdicion.resx">
       <DependentUpon>frmVidaSilvestreEdicion.cs</DependentUpon>
     </EmbeddedResource>
@@ -1077,6 +1086,7 @@
   <ItemGroup>
     <Content Include="Oxygen-Icons.org-Oxygen-Categories-applications-education-university.ico" />
     <Content Include="Reportes\LOGOKOLEGIO.bmp" />
+    <None Include="Resources\ADD.png" />
     <None Include="Resources\Test-paper-icon.png" />
     <None Include="Resources\lessons-icon.png" />
     <None Include="Resources\Actions-view-process-own-icon.png" />
