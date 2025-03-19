@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Framework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Framework;
+using ExcelInterop = Microsoft.Office.Interop.Excel;
 
 namespace KOLEGIO
 {
@@ -582,6 +580,112 @@ namespace KOLEGIO
             refrescarDatos();
             //else
             //    refrescarDatosGeneracionTotal();
+        }
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+            if (dgvCanones.RowCount == 0)
+            {
+                MessageBox.Show("No existen datos para exportar a excel.", "Exportación a excel", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                ExcelInterop.Application Excel = new ExcelInterop.Application();
+                Excel.Workbooks.Add();
+                // single worksheet
+                ExcelInterop._Worksheet Worksheet = Excel.ActiveSheet;
+
+                List<int> ColumnasNoVisibles = new List<int>();
+                List<string> colFechas = new List<string>();
+
+                //colFechas.Add("colUltimoCobro");
+                //colFechas.Add("Desde");
+                //colFechas.Add("Hasta");
+
+                int columnas = dgvCanones.ColumnCount;
+                int rows = dgvCanones.RowCount;
+                object[] Header = new object[columnas];
+
+                // column headings               
+                for (int i = 0; i < columnas; i++)
+                {
+                    if (dgvCanones.Columns[i].HeaderText != "Detalle Carga")
+                    {
+                        if (dgvCanones.Columns[i].Visible == true)
+                            Header[i] = dgvCanones.Columns[i].HeaderText;
+                        else
+                            ColumnasNoVisibles.Add(i + 1);
+                    }
+
+                }
+
+
+
+                ExcelInterop.Range HeaderRange = Worksheet.get_Range((ExcelInterop.Range)(Worksheet.Cells[1, 1]), (ExcelInterop.Range)(Worksheet.Cells[1, columnas]));
+                HeaderRange.Value = Header;
+                HeaderRange.Font.Bold = true;
+                HeaderRange.Interior.Color = ColorTranslator.ToOle(Color.Gainsboro);
+
+                // DataCells
+
+                object[,] Cells = new object[rows, columnas];
+                bool fecha = false;
+                for (int j = 0; j < rows; j++)
+                {
+                    for (int i = 0; i < columnas; i++)
+                    {
+
+                        fecha = false;
+                        for (int k = 0; k < colFechas.Count; k++)
+                        {
+                            if (dgvCanones.Columns[i].HeaderText == colFechas[k])
+                            {
+                                if (dgvCanones[i, j].Value.ToString() != "")
+                                    Cells[j, i] = DateTime.Parse(dgvCanones[i, j].Value.ToString()).ToString("yyyy-MM");
+                                else
+                                    Cells[j, i] = "";
+                                fecha = true;
+                                break;
+                            }
+                        }
+                        if (!fecha && (dgvCanones.Columns[i].HeaderText != "Detalle Carga" && dgvCanones.Columns[i].Visible == true))
+                            if (dgvCanones[i, j].Value != null)
+                                Cells[j, i] = dgvCanones[i, j].Value.ToString();
+                            else
+                                Cells[j, i] = "";
+
+                    }
+
+                }
+
+                Worksheet.Name = "Proceso Cobros Canones Anuales";
+                Worksheet.get_Range((ExcelInterop.Range)(Worksheet.Cells[2, 1]), (ExcelInterop.Range)(Worksheet.Cells[rows + 1, columnas])).Value = Cells;
+                Worksheet.Columns.AutoFit();
+                //Eliminar columnas que no estan visibles en el dgv
+                int cont = 0;
+                foreach (int column in ColumnasNoVisibles)
+                {
+                    if (cont == 0)
+                        Worksheet.Columns[column].Delete();
+                    else
+                        Worksheet.Columns[column - cont].Delete();
+                    cont++;
+                }
+
+                Excel.Visible = true;
+                // DateTime tiempo2 = DateTime.Now;
+                // TimeSpan total = new TimeSpan(tiempo2.Ticks - tiempo1.Ticks);
+                // MessageBox.Show("Duracion: " + total.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error en la exportación de datos a excel: " + ex.Message, "Exportación a Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private string generarComentario(string añoCobro, string Cia, string Categ)

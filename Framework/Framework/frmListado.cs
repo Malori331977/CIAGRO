@@ -599,7 +599,7 @@ namespace Framework
             {
                 string tabla = error.Split('"')[5].Split('.')[1];
                 string columna = error.Split('"')[6].Split('.')[0].Replace(", column ", "");
-                error = "No se pudo eliminar este registro, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + "";
+                error = "No se pudo eliminar este registro, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + $" {error}";
             }
 
             MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -356,7 +356,7 @@ namespace Framework
                 {
                     string tabla = error.Split('"')[5].Split('.')[1];
                     string columna = error.Split('"')[6].Split('.')[0].Replace(", column ", "");
-                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + "";
+                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + $" {strSQL}";
                 }
                 return false;
             }
@@ -384,7 +384,7 @@ namespace Framework
                 {
                     string tabla = error.Split('"')[5].Split('.')[1];
                     string columna = error.Split('"')[6].Split('.')[0].Replace(", column ", "");
-                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + "";
+                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + $" {strSQL}";
                 }
                 return false;
             }
@@ -415,7 +415,7 @@ namespace Framework
                 {
                     string tabla = error.Split('"')[5].Split('.')[1];
                     string columna = error.Split('"')[6].Split('.')[0].Replace(", column ", "");
-                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + "";
+                    error = "No se pudo completar el proceso, existen datos dependientes con la tabla '" + tabla + "' Columna " + columna + $" {strSQL}";
                 }
 
                 return false;

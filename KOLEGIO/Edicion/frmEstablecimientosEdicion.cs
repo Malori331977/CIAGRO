@@ -1310,6 +1310,7 @@ namespace KOLEGIO
 
                 if (lbOk)
                 {
+                    int cont = 1;  //indicador de numero de registro  
                     foreach (DataGridViewRow row in dgvVisitasFisc.Rows)
                     {
                         parametros.Clear();
@@ -1317,14 +1318,15 @@ namespace KOLEGIO
                         list.COLUMNAS_PK.Add("Id");
                         list.COLUMNAS_PK.Add("NumeroColegiado");
                         list.COLUMNAS_PK.Add("CodigoEstablecimiento");
-                        parametros.Add(row.Cells["colIdVisitas"].Value.ToString());
+                        //parametros.Add(row.Cells["colIdVisitas"].Value.ToString()); //se comenta para usar un nuevo consecutivo
+                        parametros.Add(cont.ToString());
                         parametros.Add(row.Cells["colIdColeVisitas"].Value.ToString());
                         parametros.Add(txtNumRegistro.Valor);
                         parametros.Add(DateTime.Parse(row.Cells["colFechaFisc"].Value.ToString()).ToString("yyyy-MM-ddTHH:mm:ss"));
-
                         parametros.Add(row.Cells["colObservacionFisc"].Value.ToString());
-                        lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
 
+                        lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
+                        cont++;
                     }
                 }
             }
@@ -1369,7 +1371,7 @@ namespace KOLEGIO
                     dtCliente = new DataTable();
 
                     sSelectCl = "select NumRegistro idERP, Nombre, '' Alias, Direccion, Telefono Telefono1, '' Telefono2," +
-                    " CedulaJuridica Contribuyente, 'ND' Pais, '' UsaTarjeta, '' VencimientoTarjeta, Email," +
+                    " CedulaJuridica Contribuyente, 'CRI' Pais, '' UsaTarjeta, '' VencimientoTarjeta, Email," +
                     " Provincia, Canton, 'S' Activo, (select CategoriaEstable from " + Consultas.sqlCon.COMPAÑIA + ".NV_GLOBALES) Categoria from " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS where NumRegistro = '" + txtNumRegistro.Valor + "'";
 
                     lbOk = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
