@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.39")]
-[assembly: AssemblyFileVersion("1.0.0.39")]
+[assembly: AssemblyVersion("1.0.0.40")]
+[assembly: AssemblyFileVersion("1.0.0.41")]
 //1.0.0.3--Arreglo consulta en el proceso de cobros de regencias
 //1.0.0.4--Proceso cobros masivos cobrador(90%)
 //1.0.0.5--Algunos detalles vistos en sesion 15/02/2019
@@ -71,3 +71,5 @@ using System.Runtime.InteropServices;
 //1.0.0.37--Reportes en linea, fixes
 //1.0.0.38--Fix error al abrir o modificar beneficiarios/ajustes reporte morosidad
 //1.0.0.39--Fix error guardar establecimientos, el sistema borra categorias de los establecimientos.  Correccion en formato de gobierno
+//1.0.0.40--Fix error guardar establecimientos, al guardar el establecimiento se corrige llave foranea de pais.
+//1.0.0.41--Modificación para inhabilitar categorias en establecimientos.  Selección individual de registros en Generacion de Canones anuales.

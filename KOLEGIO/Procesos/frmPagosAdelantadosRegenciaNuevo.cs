@@ -187,7 +187,8 @@ namespace KOLEGIO
             //            " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CATEGORIAS t8 on t8.CodigoCategoria = t4.CodigoCategoria" +
             //            " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_REGENCIAS t9 on t9.NumRegistro = t7.NumRegistro" +
             //            " WHERE t2.NumeroColegiado = '" + txtColegiado.Text + "' and t1.Estado = 'A'";
-            string sQuery = "select distinct t3.NumRegistro as COD_ESTABLE, t3.Nombre as ESTABLECIMIENTO, t4.NombreCategoria as CATEGORÍA, t4.CodigoCategoria as COD_CATEG, t6.MesUltimoCobro as UltMesCobro from " + Consultas.sqlCon.COMPAÑIA + ".NV_REGENTES_ESTABLECIMIENTOS t1" +
+            string sQuery = "select distinct t3.NumRegistro as COD_ESTABLE, t3.Nombre as ESTABLECIMIENTO, t4.NombreCategoria as CATEGORÍA, t4.CodigoCategoria as COD_CATEG, t6.MesUltimoCobro as UltMesCobro " +
+                            " from " + Consultas.sqlCon.COMPAÑIA + ".NV_REGENTES_ESTABLECIMIENTOS t1" +
                             " join " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 on t2.IdColegiado = t1.NumeroColegiado" +
                             " join " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t3 on t3.NumRegistro = t1.CodigoEstablecimiento" +
                             " join " + Consultas.sqlCon.COMPAÑIA + ".NV_CATEGORIAS t4 on t4.CodigoCategoria = t1.CodigoCategoria" +

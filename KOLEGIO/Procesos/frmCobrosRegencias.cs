@@ -331,7 +331,7 @@ namespace KOLEGIO.Procesos
                             " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t5 ON t5.NumRegistro = t1.CodigoEstablecimiento" +
                             " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CATEGORIAS t6 ON t6.CodigoCategoria = t1.CodigoCategoria" +
                             " JOIN " + Consultas.sqlCon.COMPAÑIA + ".ARTICULO t7 ON t7.ARTICULO = t3.CodigoArticulo" +
-                            " WHERE t1.NumeroColegiado = '" + idColegiado + "' AND t5.NumRegistro = '" + numEstablecimiento + "' and t1.CodigoCategoria = '" + numCategoria + "'";
+                            " WHERE t1.Estado='A' and  t1.NumeroColegiado = '" + idColegiado + "' AND t5.NumRegistro = '" + numEstablecimiento + "' and t1.CodigoCategoria = '" + numCategoria + "'";
 
             DataTable dtArticulos = new DataTable();
 
@@ -430,6 +430,7 @@ namespace KOLEGIO.Procesos
 
         private void refrescarDatosGeneracionTotal()//Falta validar que el colegiado no sea suspendido o retirado o fallecido
         {
+            //2025-05-15: Marlon Loria.  Se agrega condicion para filtrar las categorias inactivas y regencias inactivas.
 
             string sQuery = "select t2.IdColegiado as IdColegiado,t1.Cedula,t2.NumeroColegiado as NumCole,t2.Nombre as NombreCole, t3.NumRegistro as NumEstablecimiento, "+
                 " t3.Nombre as NomEstablecimiento, t4.NombreCategoria as nomCategoria, t4.CodigoCategoria as codCategoria,t1.Cobrador as cobradorRegente, t6.MesUltimoCobro as UltMesCobro"+

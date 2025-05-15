@@ -38,6 +38,7 @@
             this.dgvCategorias = new System.Windows.Forms.DataGridView();
             this.colCodigoCategoria = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDescripcionCat = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEstadoCat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.headerCategorias = new System.Windows.Forms.Panel();
             this.label31 = new System.Windows.Forms.Label();
             this.tpRegentes = new System.Windows.Forms.TabPage();
@@ -368,7 +369,7 @@
             this.gbCategorias.Controls.Add(this.dgvCategorias);
             this.gbCategorias.Location = new System.Drawing.Point(39, 48);
             this.gbCategorias.Name = "gbCategorias";
-            this.gbCategorias.Size = new System.Drawing.Size(526, 0);
+            this.gbCategorias.Size = new System.Drawing.Size(62, 0);
             this.gbCategorias.TabIndex = 43;
             this.gbCategorias.TabStop = false;
             this.gbCategorias.Text = "Información de Categorías";
@@ -425,13 +426,15 @@
             this.dgvCategorias.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCategorias.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCodigoCategoria,
-            this.colDescripcionCat});
-            this.dgvCategorias.Location = new System.Drawing.Point(3, 44);
+            this.colDescripcionCat,
+            this.colEstadoCat});
+            this.dgvCategorias.Location = new System.Drawing.Point(3, 43);
             this.dgvCategorias.MultiSelect = false;
             this.dgvCategorias.Name = "dgvCategorias";
             this.dgvCategorias.RowHeadersVisible = false;
-            this.dgvCategorias.Size = new System.Drawing.Size(517, 0);
+            this.dgvCategorias.Size = new System.Drawing.Size(53, 2);
             this.dgvCategorias.TabIndex = 0;
+            this.dgvCategorias.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvCategoria_EditingControlShowing);
             this.dgvCategorias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvCategorias_KeyDown);
             this.dgvCategorias.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dgvCategorias_MouseDoubleClick);
             // 
@@ -449,6 +452,15 @@
             this.colDescripcionCat.Name = "colDescripcionCat";
             this.colDescripcionCat.ReadOnly = true;
             // 
+            // colEstadoCat
+            // 
+            this.colEstadoCat.HeaderText = "Estado";
+            this.colEstadoCat.Items.AddRange(new object[] {
+            "Activo",
+            "Inactivo",
+            "No tiene Regente"});
+            this.colEstadoCat.Name = "colEstadoCat";
+            // 
             // headerCategorias
             // 
             this.headerCategorias.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -457,7 +469,7 @@
             this.headerCategorias.Controls.Add(this.label31);
             this.headerCategorias.Location = new System.Drawing.Point(3, 3);
             this.headerCategorias.Name = "headerCategorias";
-            this.headerCategorias.Size = new System.Drawing.Size(598, 21);
+            this.headerCategorias.Size = new System.Drawing.Size(134, 21);
             this.headerCategorias.TabIndex = 39;
             // 
             // label31
@@ -491,7 +503,7 @@
             this.gbRegentes.Controls.Add(this.dgvRegentes);
             this.gbRegentes.Location = new System.Drawing.Point(12, 61);
             this.gbRegentes.Name = "gbRegentes";
-            this.gbRegentes.Size = new System.Drawing.Size(577, 0);
+            this.gbRegentes.Size = new System.Drawing.Size(113, 0);
             this.gbRegentes.TabIndex = 44;
             this.gbRegentes.TabStop = false;
             // 
@@ -566,10 +578,10 @@
             this.colCodigoCobrador,
             this.colCobrador,
             this.colEstado});
-            this.dgvRegentes.Location = new System.Drawing.Point(6, 41);
+            this.dgvRegentes.Location = new System.Drawing.Point(6, 31);
             this.dgvRegentes.Name = "dgvRegentes";
             this.dgvRegentes.RowHeadersVisible = false;
-            this.dgvRegentes.Size = new System.Drawing.Size(571, 0);
+            this.dgvRegentes.Size = new System.Drawing.Size(107, 10);
             this.dgvRegentes.TabIndex = 43;
             this.dgvRegentes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRegentes_CellClick);
             this.dgvRegentes.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvRegentes_CurrentCellDirtyStateChanged);
@@ -645,7 +657,7 @@
             this.headerRegentes.Controls.Add(this.label32);
             this.headerRegentes.Location = new System.Drawing.Point(3, 3);
             this.headerRegentes.Name = "headerRegentes";
-            this.headerRegentes.Size = new System.Drawing.Size(598, 21);
+            this.headerRegentes.Size = new System.Drawing.Size(134, 21);
             this.headerRegentes.TabIndex = 40;
             // 
             // label32
@@ -1087,7 +1099,7 @@
             this.headerInformes.Controls.Add(this.label21);
             this.headerInformes.Location = new System.Drawing.Point(3, 3);
             this.headerInformes.Name = "headerInformes";
-            this.headerInformes.Size = new System.Drawing.Size(598, 21);
+            this.headerInformes.Size = new System.Drawing.Size(134, 21);
             this.headerInformes.TabIndex = 44;
             // 
             // label21
@@ -1110,7 +1122,7 @@
             this.gbInformes.Controls.Add(this.dgvInformes);
             this.gbInformes.Location = new System.Drawing.Point(26, 50);
             this.gbInformes.Name = "gbInformes";
-            this.gbInformes.Size = new System.Drawing.Size(557, 0);
+            this.gbInformes.Size = new System.Drawing.Size(93, 0);
             this.gbInformes.TabIndex = 43;
             this.gbInformes.TabStop = false;
             this.gbInformes.Text = "Informes Realizados";
@@ -1186,7 +1198,7 @@
             this.dgvInformes.MultiSelect = false;
             this.dgvInformes.Name = "dgvInformes";
             this.dgvInformes.RowHeadersVisible = false;
-            this.dgvInformes.Size = new System.Drawing.Size(548, 0);
+            this.dgvInformes.Size = new System.Drawing.Size(84, 0);
             this.dgvInformes.TabIndex = 0;
             this.dgvInformes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInformes_CellClick);
             this.dgvInformes.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvInformes_CurrentCellDirtyStateChanged);
@@ -1307,7 +1319,7 @@
             this.headerVisitas.Controls.Add(this.label22);
             this.headerVisitas.Location = new System.Drawing.Point(3, 3);
             this.headerVisitas.Name = "headerVisitas";
-            this.headerVisitas.Size = new System.Drawing.Size(598, 21);
+            this.headerVisitas.Size = new System.Drawing.Size(134, 21);
             this.headerVisitas.TabIndex = 45;
             // 
             // label22
@@ -2018,7 +2030,7 @@
             this.panel2.Controls.Add(this.label12);
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(598, 21);
+            this.panel2.Size = new System.Drawing.Size(134, 21);
             this.panel2.TabIndex = 46;
             // 
             // label12
@@ -2175,8 +2187,6 @@
         private System.Windows.Forms.ToolStripButton btnNuevaCategoria;
         private System.Windows.Forms.ToolStripButton btnEliminaCategoria;
         private System.Windows.Forms.DataGridView dgvCategorias;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCodigoCategoria;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colDescripcionCat;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.ToolStrip toolStrip3;
         private System.Windows.Forms.ToolStripButton btnAjustarCol;
@@ -2273,5 +2283,8 @@
 		private System.Windows.Forms.DataGridViewComboBoxColumn colTipoFin;
 		private System.Windows.Forms.DateTimePicker dtpFechaCanon;
 		private System.Windows.Forms.Label label33;
-	}
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCodigoCategoria;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDescripcionCat;
+        private System.Windows.Forms.DataGridViewComboBoxColumn colEstadoCat;
+    }
 }

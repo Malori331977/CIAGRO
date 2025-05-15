@@ -745,7 +745,7 @@
             this.grbEstadoCanonPlagui.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grbEstadoCanonPlagui.Controls.Add(this.groupBox13);
             this.grbEstadoCanonPlagui.Controls.Add(this.groupBox14);
-            this.grbEstadoCanonPlagui.Location = new System.Drawing.Point(-14499, 10);
+            this.grbEstadoCanonPlagui.Location = new System.Drawing.Point(-15145, 10);
             this.grbEstadoCanonPlagui.Name = "grbEstadoCanonPlagui";
             this.grbEstadoCanonPlagui.Size = new System.Drawing.Size(285, 87);
             this.grbEstadoCanonPlagui.TabIndex = 283;
@@ -1387,7 +1387,7 @@
             this.grbSesionEspecialidad.Controls.Add(this.label25);
             this.grbSesionEspecialidad.Controls.Add(this.label26);
             this.grbSesionEspecialidad.Controls.Add(this.txtSesionAprob);
-            this.grbSesionEspecialidad.Location = new System.Drawing.Point(-22103, 30);
+            this.grbSesionEspecialidad.Location = new System.Drawing.Point(-22749, 30);
             this.grbSesionEspecialidad.Name = "grbSesionEspecialidad";
             this.grbSesionEspecialidad.Size = new System.Drawing.Size(406, 64);
             this.grbSesionEspecialidad.TabIndex = 267;
@@ -1627,7 +1627,7 @@
             this.grbAdelantos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grbAdelantos.Controls.Add(this.dgvGestionCobroAdel);
-            this.grbAdelantos.Location = new System.Drawing.Point(12, -8280);
+            this.grbAdelantos.Location = new System.Drawing.Point(12, -8694);
             this.grbAdelantos.Name = "grbAdelantos";
             this.grbAdelantos.Size = new System.Drawing.Size(0, 155);
             this.grbAdelantos.TabIndex = 47;
@@ -1683,7 +1683,7 @@
             this.grbPendientes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grbPendientes.Controls.Add(this.dgvGestionCobro);
-            this.grbPendientes.Location = new System.Drawing.Point(12, -8119);
+            this.grbPendientes.Location = new System.Drawing.Point(12, -8533);
             this.grbPendientes.Name = "grbPendientes";
             this.grbPendientes.Size = new System.Drawing.Size(0, 178);
             this.grbPendientes.TabIndex = 46;
@@ -3712,7 +3712,7 @@
             // 
             this.txtHistTelEmpresa.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtHistTelEmpresa.FormatearNumero = false;
-            this.txtHistTelEmpresa.Location = new System.Drawing.Point(-21836, 146);
+            this.txtHistTelEmpresa.Location = new System.Drawing.Point(-22482, 146);
             this.txtHistTelEmpresa.Longitud = 30;
             this.txtHistTelEmpresa.Multilinea = false;
             this.txtHistTelEmpresa.Name = "txtHistTelEmpresa";
@@ -3726,7 +3726,7 @@
             // 
             this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label60.AutoSize = true;
-            this.label60.Location = new System.Drawing.Point(-22249, 146);
+            this.label60.Location = new System.Drawing.Point(-22895, 146);
             this.label60.Name = "label60";
             this.label60.Size = new System.Drawing.Size(96, 13);
             this.label60.TabIndex = 291;
@@ -3752,7 +3752,7 @@
             this.grbRangoLaboral.Controls.Add(this.label53);
             this.grbRangoLaboral.Controls.Add(this.dtpEmpresaHasta);
             this.grbRangoLaboral.Controls.Add(this.dtpEmpresaDesde);
-            this.grbRangoLaboral.Location = new System.Drawing.Point(-14817, 57);
+            this.grbRangoLaboral.Location = new System.Drawing.Point(-15463, 57);
             this.grbRangoLaboral.Name = "grbRangoLaboral";
             this.grbRangoLaboral.Size = new System.Drawing.Size(272, 79);
             this.grbRangoLaboral.TabIndex = 286;
@@ -4156,7 +4156,7 @@
             this.grbMutualidad.Controls.Add(this.label13);
             this.grbMutualidad.Controls.Add(this.chkRenuncia);
             this.grbMutualidad.Controls.Add(this.txtCalculoMutualidad);
-            this.grbMutualidad.Location = new System.Drawing.Point(153, -6219);
+            this.grbMutualidad.Location = new System.Drawing.Point(153, -6633);
             this.grbMutualidad.Name = "grbMutualidad";
             this.grbMutualidad.Size = new System.Drawing.Size(0, 216);
             this.grbMutualidad.TabIndex = 286;
@@ -4363,7 +4363,7 @@
             this.grbTituloObligatorio.Controls.Add(this.txtCalculoTitulo);
             this.grbTituloObligatorio.Controls.Add(this.rbNoTitulo);
             this.grbTituloObligatorio.Controls.Add(this.rbSiTitulo);
-            this.grbTituloObligatorio.Location = new System.Drawing.Point(594, -10137);
+            this.grbTituloObligatorio.Location = new System.Drawing.Point(594, -10551);
             this.grbTituloObligatorio.Name = "grbTituloObligatorio";
             this.grbTituloObligatorio.Size = new System.Drawing.Size(0, 95);
             this.grbTituloObligatorio.TabIndex = 285;
@@ -4680,7 +4680,7 @@
             this.grbSesionCond.Controls.Add(this.label62);
             this.grbSesionCond.Controls.Add(this.txtSesionCond);
             this.grbSesionCond.Enabled = false;
-            this.grbSesionCond.Location = new System.Drawing.Point(465, -10386);
+            this.grbSesionCond.Location = new System.Drawing.Point(465, -10800);
             this.grbSesionCond.Name = "grbSesionCond";
             this.grbSesionCond.Size = new System.Drawing.Size(0, 66);
             this.grbSesionCond.TabIndex = 280;
@@ -5285,7 +5285,7 @@
             this.grbEstadoCanonAerea.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grbEstadoCanonAerea.Controls.Add(this.groupBox6);
             this.grbEstadoCanonAerea.Controls.Add(this.groupBox5);
-            this.grbEstadoCanonAerea.Location = new System.Drawing.Point(-19001, 7);
+            this.grbEstadoCanonAerea.Location = new System.Drawing.Point(-19647, 7);
             this.grbEstadoCanonAerea.Name = "grbEstadoCanonAerea";
             this.grbEstadoCanonAerea.Size = new System.Drawing.Size(284, 87);
             this.grbEstadoCanonAerea.TabIndex = 282;
@@ -5744,7 +5744,7 @@
             // 
             this.gbGradoAcade.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.gbGradoAcade.Controls.Add(this.clbGrados);
-            this.gbGradoAcade.Location = new System.Drawing.Point(-13883, 77);
+            this.gbGradoAcade.Location = new System.Drawing.Point(-14529, 77);
             this.gbGradoAcade.Name = "gbGradoAcade";
             this.gbGradoAcade.Size = new System.Drawing.Size(297, 79);
             this.gbGradoAcade.TabIndex = 285;
@@ -5801,7 +5801,7 @@
             // 
             this.dtpFechaGradu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.dtpFechaGradu.Checked = true;
-            this.dtpFechaGradu.Location = new System.Drawing.Point(-13688, 49);
+            this.dtpFechaGradu.Location = new System.Drawing.Point(-14334, 49);
             this.dtpFechaGradu.mostrarCheckBox = false;
             this.dtpFechaGradu.mostrarUpDown = false;
             this.dtpFechaGradu.Name = "dtpFechaGradu";
@@ -5826,7 +5826,7 @@
             this.grbEstadoCanonSilve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grbEstadoCanonSilve.Controls.Add(this.groupBox3);
             this.grbEstadoCanonSilve.Controls.Add(this.groupBox4);
-            this.grbEstadoCanonSilve.Location = new System.Drawing.Point(-14477, 7);
+            this.grbEstadoCanonSilve.Location = new System.Drawing.Point(-15123, 7);
             this.grbEstadoCanonSilve.Name = "grbEstadoCanonSilve";
             this.grbEstadoCanonSilve.Size = new System.Drawing.Size(285, 87);
             this.grbEstadoCanonSilve.TabIndex = 287;
