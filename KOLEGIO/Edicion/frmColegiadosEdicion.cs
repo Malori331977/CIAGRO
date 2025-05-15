@@ -2028,10 +2028,16 @@ namespace KOLEGIO
 			{
 				if (dgvEstablecimientos.Rows.Count > 0)
 				{
-					foreach (DataGridViewRow row in dgvEstablecimientos.Rows)
+                    lbOk = VerificaEstadoRegenciasVrsCategorias(ref error);
+
+                    if (lbOk)
 					{
-						lbOk = fInternas.insertarHistorialRegencias(txtIdColegiado.Valor, row.Cells["colCodigoEstablecimiento"].Value.ToString(), row.Cells["colCodigoCategoria"].Value.ToString(), row.Cells["colEstadoEst"].Value.ToString()[0].ToString(), ref error);
-					}
+                        foreach (DataGridViewRow row in dgvEstablecimientos.Rows)
+                        {
+                            lbOk = fInternas.insertarHistorialRegencias(txtIdColegiado.Valor, row.Cells["colCodigoEstablecimiento"].Value.ToString(), row.Cells["colCodigoCategoria"].Value.ToString(), row.Cells["colEstadoEst"].Value.ToString()[0].ToString(), ref error);
+                        }
+                    }
+                        
 
 					if (lbOk)
 					{
@@ -9016,6 +9022,83 @@ namespace KOLEGIO
             }
             else
                 MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private bool VerificaEstadoRegenciasVrsCategorias(ref string error)
+        {
+            error = "";
+            bool lbOk = true;
+
+            foreach (DataGridViewRow row in dgvEstablecimientos.Rows)
+            {
+                if (row.Cells["colEstadoEst"].Value.ToString()[0].ToString() == "A")
+                {
+                    if (!ExisteCategoriaActiva(row.Cells["colCodigoCategoria"].Value.ToString(), row.Cells["colCodigoEstablecimiento"].Value.ToString()))
+                    {
+                        if (MessageBox.Show($"La categoria {row.Cells["colCategoria"].Value.ToString()} para el establecimiento {row.Cells["colCodigoEstablecimiento"].Value.ToString()} {row.Cells["colNombreEstablecimiento"].Value.ToString()} se encuentra INACTIVA.¿Desea activar el Estado de la Categoría para el establecimiento?", "Validación", MessageBoxButtons.YesNo,
+                              MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            lbOk = ActivaCategoriaRegenciaEstablecimento(row.Cells["colCodigoEstablecimiento"].Value.ToString(),
+                                                                         row.Cells["colCodigoCategoria"].Value.ToString(),
+                                                                         row.Cells["colCategoria"].Value.ToString(),
+                                                                         ref error);
+                        }
+                        else
+                        {
+                            error = $"Mientras la categoria  {row.Cells["colCategoria"].Value.ToString()} se encuentre INACTIVA no se podrá realizar el cambio de estado para el establecimiento {row.Cells["colCodigoEstablecimiento"].Value.ToString()} {row.Cells["colNombreEstablecimiento"].Value.ToString()}.";
+                            lbOk = false;
+                            return lbOk;
+                        }
+
+
+                    }
+                }
+            }
+            return lbOk;
+        }
+
+        private bool ExisteCategoriaActiva(string categoria, string establecimiento)
+        {
+            DataTable dtCatEst = new DataTable();
+            string sSelectCl = $"select * from {Consultas.sqlCon.COMPAÑIA}.NV_ESTABLECIMIENTOS_CATEGORIAS where CodigoCategoria = '{categoria}' and NumRegistroEstablecimiento='{establecimiento}' and Estado='A'";
+
+            var lbOk = Consultas.fillDataTable(sSelectCl, ref dtCatEst, ref error);
+
+            if (lbOk && dtCatEst.Rows.Count > 0)
+                return true;
+
+            return false;
+        }
+
+        private bool ActivaCategoriaRegenciaEstablecimento(string establecimiento, string categoria, string nombreCategoria, ref string error)
+        {
+            Listado list = new Listado();
+            list.COLUMNAS = "NumRegistroEstablecimiento,CodigoCategoria,NombreCategoria,Estado";
+            list.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
+            list.TABLA = "NV_ESTABLECIMIENTOS_CATEGORIAS";
+            bool lbOk = true;
+            try
+            {
+                parametros.Clear();
+                list.COLUMNAS_PK.Clear();
+                list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
+                list.COLUMNAS_PK.Add("CodigoCategoria");
+                parametros.Add(establecimiento);
+                parametros.Add(categoria);
+                parametros.Add(nombreCategoria);
+                parametros.Add("A");
+                parametros.Add(establecimiento);
+                list.FILTRO = " WHERE NumRegistroEstablecimiento='" + establecimiento + "' AND CodigoCategoria='" + categoria + "'";
+
+                lbOk = Consultas.actualizar(parametros, list, identificadorFormulario, ref error);
+
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return false;
+            }
+            return lbOk;
         }
 
     }

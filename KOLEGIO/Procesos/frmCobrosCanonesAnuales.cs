@@ -214,7 +214,7 @@ namespace KOLEGIO
         private void generarCanones()
         {
             string error = "";
-            int progreso = 1;
+            int progreso = 0;
             bwProceso.ReportProgress(progreso);
 
             if (articulo.Equals(""))
@@ -222,177 +222,179 @@ namespace KOLEGIO
 
             foreach (DataGridViewRow row in dgvCanones.Rows)
             {
-                bool OK = true;
-                //string referenciaCobro = "colegiatura";
-                DataTable dtCliente = new DataTable();
-                DataTable dtNit = new DataTable();
-                int AñoCobro = 0, AñoCobroActualizado = 0, añoActual = DateTime.Now.Year;
-                DateTime AñoCobro2 = DateTime.Now, AñoCobroActualizado2 = DateTime.Now, añoActual2 = new DateTime(DateTime.Now.Year, 1, 1); ;
-                string sSelect = "";
-                string sSelectCl = "";
-                //string IdColegiado_CedJuridica = "";
-                DataTable dtAplicaClie = new DataTable();
-                //DateTime fechaActu = DateTime.Now;
-                //DateTime mesCobro = DateTime.Now;
-                //fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, /*DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Day*/ 25);
-                //fechaActu = new DateTime(DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Year, 1, 1);
-
-                if (validarAñoCobro(row.Cells["colUltimoCobro"].Value.ToString()))
-                //if (row.Cells["colUltimoCobro"].Value.ToString().Equals("") || int.Parse(row.Cells["colUltimoCobro"].Value.ToString()) < añoActual)
+                if ((bool)row.Cells["Aplicar"].Value==true)
                 {
-                    try
+                    bool OK = true;
+                    //string referenciaCobro = "colegiatura";
+                    DataTable dtCliente = new DataTable();
+                    DataTable dtNit = new DataTable();
+                    int AñoCobro = 0, AñoCobroActualizado = 0, añoActual = DateTime.Now.Year;
+                    DateTime AñoCobro2 = DateTime.Now, AñoCobroActualizado2 = DateTime.Now, añoActual2 = new DateTime(DateTime.Now.Year, 1, 1); ;
+                    string sSelect = "";
+                    string sSelectCl = "";
+                    //string IdColegiado_CedJuridica = "";
+                    DataTable dtAplicaClie = new DataTable();
+                    //DateTime fechaActu = DateTime.Now;
+                    //DateTime mesCobro = DateTime.Now;
+                    //fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, /*DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Day*/ 25);
+                    //fechaActu = new DateTime(DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Year, 1, 1);
+
+                    if (validarAñoCobro(row.Cells["colUltimoCobro"].Value.ToString()))
+                    //if (row.Cells["colUltimoCobro"].Value.ToString().Equals("") || int.Parse(row.Cells["colUltimoCobro"].Value.ToString()) < añoActual)
                     {
-                        Consultas.sqlCon.iniciaTransaccion();
-
-                        if (esPeritaje || esPlaguicida || esViaAerea)
+                        try
                         {
-                            //sSelect = "select AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla = (select distinct CodigoPlantilla from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES_COLEGIADO where NumeroColegiado = '" + row.Cells["colIdentificador"].Value.ToString() + "') and AplicaClienteErp = 'S'";
-                            sSelect = "select AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla =" +
-                            " (SELECT t3.CodigoPlantilla FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1 JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t2 ON t2.CodigoCondicion = t1.Condicion" +
-                            " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES t3 ON t3.CodigoPlantilla = t2.CodigoPlantilla where t1.IdColegiado = '" + row.Cells["colIdentificador"].Value.ToString() + "')" +
-                            " and AplicaClienteErp = 'S'";
-                            OK = Consultas.fillDataTable(sSelect, ref dtAplicaClie, ref error);
+                            Consultas.sqlCon.iniciaTransaccion();
 
-                            if (OK && dtAplicaClie.Rows.Count > 0 && dtNit.Rows.Count == 0)
+                            if (esPeritaje || esPlaguicida || esViaAerea)
                             {
-                                sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".NIT where NIT = '" + row.Cells["colIdentificador"].Value.ToString() + "'";
-                                OK = Consultas.fillDataTable(sSelectCl, ref dtNit, ref error);
+                                //sSelect = "select AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla = (select distinct CodigoPlantilla from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES_COLEGIADO where NumeroColegiado = '" + row.Cells["colIdentificador"].Value.ToString() + "') and AplicaClienteErp = 'S'";
+                                sSelect = "select AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla =" +
+                                " (SELECT t3.CodigoPlantilla FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1 JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t2 ON t2.CodigoCondicion = t1.Condicion" +
+                                " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES t3 ON t3.CodigoPlantilla = t2.CodigoPlantilla where t1.IdColegiado = '" + row.Cells["colIdentificador"].Value.ToString() + "')" +
+                                " and AplicaClienteErp = 'S'";
+                                OK = Consultas.fillDataTable(sSelect, ref dtAplicaClie, ref error);
 
-                                if (OK)
-                                    OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "colegiado", ref error);
-                            }//Lleva elcampo cedula juridica pero se envia la cedula del colegiado
-
-                            if (OK && dtAplicaClie.Rows.Count > 0 && dtCliente.Rows.Count == 0)
-                            {
-                                sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".CLIENTE where CLIENTE = '" + row.Cells["colIdentificador"].Value.ToString() + "'";
-                                OK = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
-
-                                if (OK)
-                                    OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "colegiado", "C", ref error);
-                            }
-                        }
-                        else
-                        {
-
-                            if (!row.Cells["colCedulaJuridica"].Value.ToString().Equals(""))
-                            {
-                                if (OK)
+                                if (OK && dtAplicaClie.Rows.Count > 0 && dtNit.Rows.Count == 0)
                                 {
-                                    sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".NIT where NIT = '" + row.Cells["colCedulaJuridica"].Value.ToString() + "'";
+                                    sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".NIT where NIT = '" + row.Cells["colIdentificador"].Value.ToString() + "'";
                                     OK = Consultas.fillDataTable(sSelectCl, ref dtNit, ref error);
 
-                                    if (OK && dtNit.Rows.Count == 0)
-                                    {
-                                        if (esEstable)
-                                            OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "estable", ref error);
-                                        else
-                                            OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "consul", ref error);
-                                    }
+                                    if (OK)
+                                        OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "colegiado", ref error);
+                                }//Lleva elcampo cedula juridica pero se envia la cedula del colegiado
 
-
-                                }
-
-                                if (OK)
+                                if (OK && dtAplicaClie.Rows.Count > 0 && dtCliente.Rows.Count == 0)
                                 {
                                     sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".CLIENTE where CLIENTE = '" + row.Cells["colIdentificador"].Value.ToString() + "'";
                                     OK = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
 
-                                    if (OK && dtCliente.Rows.Count == 0)
-                                    {
-                                        if (esEstable)
-                                            OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "estable", "C_A", ref error);
-                                        else
-                                            OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "consul", "C_A", ref error);
-                                    }
-
+                                    if (OK)
+                                        OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "colegiado", "C", ref error);
                                 }
                             }
                             else
                             {
-                                OK = false;
-                                error = "No se encontro la cedula juridica para la creacion del NIT.";
+
+                                if (!row.Cells["colCedulaJuridica"].Value.ToString().Equals(""))
+                                {
+                                    if (OK)
+                                    {
+                                        sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".NIT where NIT = '" + row.Cells["colCedulaJuridica"].Value.ToString() + "'";
+                                        OK = Consultas.fillDataTable(sSelectCl, ref dtNit, ref error);
+
+                                        if (OK && dtNit.Rows.Count == 0)
+                                        {
+                                            if (esEstable)
+                                                OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "estable", ref error);
+                                            else
+                                                OK = fInternas.generarNit(row.Cells["colCedulaJuridica"].Value.ToString(), row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "consul", ref error);
+                                        }
+
+
+                                    }
+
+                                    if (OK)
+                                    {
+                                        sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".CLIENTE where CLIENTE = '" + row.Cells["colIdentificador"].Value.ToString() + "'";
+                                        OK = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
+
+                                        if (OK && dtCliente.Rows.Count == 0)
+                                        {
+                                            if (esEstable)
+                                                OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "estable", "C_A", ref error);
+                                            else
+                                                OK = fInternas.generarCliente(row.Cells["colIdentificador"].Value.ToString(), ref dtCliente, "consul", "C_A", ref error);
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    OK = false;
+                                    error = "No se encontro la cedula juridica para la creacion del NIT.";
+                                }
                             }
-                        }
 
-                        if (OK)
-                            OK = fInternas.verificarAceptaDocElectronicoClienteERP(row.Cells["colIdentificador"].Value.ToString(), ref error);
+                            if (OK)
+                                OK = fInternas.verificarAceptaDocElectronicoClienteERP(row.Cells["colIdentificador"].Value.ToString(), ref error);
 
-                        if (OK)
-                        {
-                            if (!row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
+                            if (OK)
                             {
-                                int año = int.Parse(row.Cells["colUltimoCobro"].Value.ToString());
-                                AñoCobro2 = new DateTime(año,1,1);
-                                AñoCobro2 = AñoCobro2.AddMonths(1).AddDays(-1);
-                                AñoCobroActualizado2 = AñoCobro2.AddYears(1);
-                                //AñoCobro = int.Parse(row.Cells["colUltimoCobro"].Value.ToString());
-                                //AñoCobroActualizado = AñoCobro + 1;
+                                if (!row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
+                                {
+                                    int año = int.Parse(row.Cells["colUltimoCobro"].Value.ToString());
+                                    AñoCobro2 = new DateTime(año, 1, 1);
+                                    AñoCobro2 = AñoCobro2.AddMonths(1).AddDays(-1);
+                                    AñoCobroActualizado2 = AñoCobro2.AddYears(1);
+                                    //AñoCobro = int.Parse(row.Cells["colUltimoCobro"].Value.ToString());
+                                    //AñoCobroActualizado = AñoCobro + 1;
+                                }
+                                else
+                                {
+                                    AñoCobro2 = añoActual2;
+                                    AñoCobro2 = AñoCobro2.AddMonths(1).AddDays(-1);
+                                    AñoCobroActualizado2 = AñoCobro2.AddYears(1);
+                                }
+                                //if (row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
+                                //{
+                                //    mesCobro = new DateTime(mesCobro.Year, mesCobro.Month, /*mesCobro.Day*/ 25);
+                                //}
+                                //else
+                                //{
+                                //    DateTime ActualizarCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString());
+                                //    mesCobro = new DateTime(ActualizarCobro.Year, ActualizarCobro.Month,/*mesCobro.Day*/ 25).AddMonths(1);
+                                //    //mesUltCobro = mesUltCobro.AddMonths(1);
+                                //}
+                                //mesCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).AddMonths(1);
+
+
+                                OK = generarPedido(row.Cells["colIdentificador"].Value.ToString(), row.Cells["colCedulaJuridica"].Value.ToString(), /*dtPedido,*/ row.Cells["colCobrador"].Value.ToString(), AñoCobroActualizado2.ToString("yyyy"), row.Cells["colNombre"].Value.ToString(), ref error);
+
+                            }
+
+                            if (OK)
+                            {
+                                //DateTime ultimoCobro = new DateTime(AñoCobroActualizado, 1, 1);
+                                OK = actualizarUltAñoCobro(row.Cells["colIdentificador"].Value.ToString(), AñoCobroActualizado2, canonPedido, ref error);
+                            }
+
+
+                            if (OK)
+                            {
+                                Consultas.sqlCon.Commit();
+                                totalRegistrosExitosos += 1;
+                                row.Cells["colResultado"].Value = iList.Images[2];
+                                row.Cells["colObservaciones"].Value = "¡Proceso exitoso!";
+                                actualizarAñoCobro(row.Cells["colIdentificador"].Value.ToString(), AñoCobroActualizado2.ToString("yyyy"));
                             }
                             else
                             {
-                                AñoCobro2 = añoActual2;
-                                AñoCobro2 = AñoCobro2.AddMonths(1).AddDays(-1);
-                                AñoCobroActualizado2 = AñoCobro2.AddYears(1);
+                                Consultas.sqlCon.Rollback();
+                                totalRegistrosErroneos += 1;
+                                row.Cells["colResultado"].Value = iList.Images[1];
+                                row.Cells["colObservaciones"].Value = error;
+
                             }
-                            //if (row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
-                            //{
-                            //    mesCobro = new DateTime(mesCobro.Year, mesCobro.Month, /*mesCobro.Day*/ 25);
-                            //}
-                            //else
-                            //{
-                            //    DateTime ActualizarCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString());
-                            //    mesCobro = new DateTime(ActualizarCobro.Year, ActualizarCobro.Month,/*mesCobro.Day*/ 25).AddMonths(1);
-                            //    //mesUltCobro = mesUltCobro.AddMonths(1);
-                            //}
-                            //mesCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).AddMonths(1);
-                            
 
-                            OK = generarPedido(row.Cells["colIdentificador"].Value.ToString(), row.Cells["colCedulaJuridica"].Value.ToString(), /*dtPedido,*/ row.Cells["colCobrador"].Value.ToString(), AñoCobroActualizado2.ToString("yyyy"), row.Cells["colNombre"].Value.ToString(), ref error);
-                            
                         }
-
-                        if (OK)
-                        {
-                            //DateTime ultimoCobro = new DateTime(AñoCobroActualizado, 1, 1);
-                            OK = actualizarUltAñoCobro(row.Cells["colIdentificador"].Value.ToString(), AñoCobroActualizado2, canonPedido, ref error);
-                        }
-                            
-
-                        if (OK)
-                        {
-                            Consultas.sqlCon.Commit();
-                            totalRegistrosExitosos += 1;
-                            row.Cells["colResultado"].Value = iList.Images[2];
-                            row.Cells["colObservaciones"].Value = "¡Proceso exitoso!";
-                            actualizarAñoCobro(row.Cells["colIdentificador"].Value.ToString(), AñoCobroActualizado2.ToString("yyyy"));
-                        }
-                        else
+                        catch (Exception ex)
                         {
                             Consultas.sqlCon.Rollback();
-                            totalRegistrosErroneos += 1;
                             row.Cells["colResultado"].Value = iList.Images[1];
-                            row.Cells["colObservaciones"].Value = error;
-
+                            row.Cells["colObservaciones"].Value = ex.Message;
                         }
-
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Consultas.sqlCon.Rollback();
-                        row.Cells["colResultado"].Value = iList.Images[1];
-                        row.Cells["colObservaciones"].Value = ex.Message;
+                        //Consultas.sqlCon.Rollback();
+                        totalRegistrosErroneos += 1;
+                        row.Cells["colResultado"].Value = iList.Images[3];
+                        row.Cells["colObservaciones"].Value = "Ya se le cobró el año actual a este colegiado";
+
                     }
+                    
                 }
-                else
-                {
-                    //Consultas.sqlCon.Rollback();
-                    totalRegistrosErroneos += 1;
-                    row.Cells["colResultado"].Value = iList.Images[3];
-                    row.Cells["colObservaciones"].Value = "Ya se le cobró el año actual a este colegiado";
-
-                }
-
-
                 progreso += 1;
                 bwProceso.ReportProgress(progreso);
             }
@@ -688,6 +690,68 @@ namespace KOLEGIO
             Cursor.Current = Cursors.Default;
         }
 
+        private void chkMasivo_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (chkMasivo.Checked)
+            {
+                activarMasivo();
+            }
+            else
+            {
+                desactivarMasivo();
+            }
+        }
+
+        private void activarMasivo()
+        {
+            foreach (DataGridViewRow row in dgvCanones.Rows)
+            {
+                //row.Cells["colCheck"].Value = true;
+                row.Cells["Aplicar"].Value = true;
+            }
+            dgvCanones.EndEdit();
+        }
+
+        private void desactivarMasivo()
+        {
+            foreach (DataGridViewRow row in dgvCanones.Rows)
+            {
+                //row.Cells["colCheck"].Value = false;
+                row.Cells["Aplicar"].Value = false;
+            }
+            dgvCanones.EndEdit();
+
+        }
+
+        private void dgvCanones_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvCanones.Rows.Count > 0)
+            {
+                //if (dgvColegiados.CurrentCell.OwningColumn.Name == "colCheck")
+                if (dgvCanones.CurrentCell.OwningColumn.Name == "Aplicar")
+                {
+                    if (e.RowIndex >= 0)
+                    {
+                        //if ((bool)dgvColegiados.Rows[e.RowIndex].Cells["colCheck"].Value == false)
+                        if ((bool)dgvCanones.Rows[e.RowIndex].Cells["Aplicar"].Value == false)
+                        {
+                            //dgvColegiados.Rows[e.RowIndex].Cells["colCheck"].Value = true;
+                            dgvCanones.Rows[e.RowIndex].Cells["Aplicar"].Value = true;
+                        }
+                        else
+                            dgvCanones.Rows[e.RowIndex].Cells["Aplicar"].Value = false;
+                        //dgvColegiados.Rows[e.RowIndex].Cells["colCheck"].Value = false;
+
+
+
+                        dgvCanones.EndEdit();
+
+                    }
+                }
+            }
+        }
+
+
         private string generarComentario(string añoCobro, string Cia, string Categ)
         {
             string comentario = "";
@@ -729,7 +793,7 @@ namespace KOLEGIO
             {
                 //sQuery = "SELECT DISTINCT t1.IdColegiado, t2.NumeroColegiado, t2.Nombre, t2.Cobrador FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_INVESTIGACION_PLAGUICIDAS_COLEGIADO t1" +
                 //" INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado WHERE t1.PagaCanon = 'S'";
-                sQuery = "SELECT DISTINCT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_INVESTIGACION_PLAGUICIDAS_COLEGIADO t1" +
+                sQuery = "SELECT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_INVESTIGACION_PLAGUICIDAS_COLEGIADO t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.IdColegiado AND t3.canon = 'PLAGUI'" +
                         " WHERE t2.PagaCanonPlagui = 'S' AND t1.Activo = 1 AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
@@ -739,7 +803,7 @@ namespace KOLEGIO
             {
                 //sQuery = "SELECT DISTINCT t1.IdColegiado, t2.NumeroColegiado, t2.Nombre, t2.Cobrador FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_VIA_AEREA_COLEGIADO t1" +
                 //" INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado WHERE t1.PagaCanon = 'S'";
-                sQuery = "SELECT DISTINCT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_VIA_AEREA_COLEGIADO t1" +
+                sQuery = "SELECT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_VIA_AEREA_COLEGIADO t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.IdColegiado AND t3.canon = 'AEREA'" +
                         " WHERE t2.PagaCanonAerea = 'S' AND t1.Activo = 1 AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
@@ -782,7 +846,7 @@ namespace KOLEGIO
                             if (esPeritaje || esPlaguicida || esViaAerea)
                             {
                                 totalRegistros += 1;
-                                dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["Cedula"].ToString(), row["NumeroColegiado"].ToString(),
+                                dgvCanones.Rows.Add(false, row["IdColegiado"].ToString(), row["Cedula"].ToString(), row["NumeroColegiado"].ToString(),
                                     row["Nombre"].ToString(), row["Email"].ToString(), row["AñoUltimoCobro"].ToString() != "" ? DateTime.Parse(row["AñoUltimoCobro"].ToString()).ToString("yyyy") : "", row["Cobrador"].ToString());
                                 dgvCanones.Columns["colCedulaJuridica"].Visible = false;
                                 dgvCanones.Columns["colNumeroColegiado"].Visible = true;
@@ -791,7 +855,7 @@ namespace KOLEGIO
                             if (esConsultora || esEstable)
                             {
                                 totalRegistros += 1;
-                                dgvCanones.Rows.Add(row["Codigo"].ToString(), row["Cedula"].ToString(), string.Empty,
+                                dgvCanones.Rows.Add(false, row["Codigo"].ToString(), row["Cedula"].ToString(), string.Empty,
                                     row["Nombre"].ToString(), row["Email"].ToString(), row["AñoUltimoCobro"].ToString() != "" ? DateTime.Parse(row["AñoUltimoCobro"].ToString()).ToString("yyyy") : "", row["Cobrador"].ToString());
                                 dgvCanones.Columns["colNumeroColegiado"].Visible = false;
                                 dgvCanones.Columns["colCedulaJuridica"].Visible = true;
@@ -814,7 +878,7 @@ namespace KOLEGIO
                                 if (esPeritaje || esPlaguicida ||esViaAerea)
                                 {
                                     totalRegistros += 1;
-                                    dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["Cedula"].ToString(), row["NumeroColegiado"].ToString(),
+                                    dgvCanones.Rows.Add(false, row["IdColegiado"].ToString(), row["Cedula"].ToString(), row["NumeroColegiado"].ToString(),
                                         row["Nombre"].ToString(), row["Email"].ToString(), row["AñoUltimoCobro"].ToString() != "" ? DateTime.Parse(row["AñoUltimoCobro"].ToString()).ToString("yyyy") : "", row["Cobrador"].ToString());
                                     dgvCanones.Columns["colCedulaJuridica"].Visible = false;
                                     dgvCanones.Columns["colNumeroColegiado"].Visible = true;
@@ -823,7 +887,7 @@ namespace KOLEGIO
                                 if (esConsultora || esEstable)
                                 {
                                     totalRegistros += 1;
-                                    dgvCanones.Rows.Add(row["Codigo"].ToString(), row["Cedula"].ToString(), string.Empty,
+                                    dgvCanones.Rows.Add(false, row["Codigo"].ToString(), row["Cedula"].ToString(), string.Empty,
                                         row["Nombre"].ToString(), row["Email"].ToString(), row["AñoUltimoCobro"].ToString() != "" ? DateTime.Parse(row["AñoUltimoCobro"].ToString()).ToString("yyyy") : "", row["Cobrador"].ToString());
                                     dgvCanones.Columns["colNumeroColegiado"].Visible = false;
                                     dgvCanones.Columns["colCedulaJuridica"].Visible = true;

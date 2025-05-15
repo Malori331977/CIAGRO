@@ -639,7 +639,7 @@ namespace KOLEGIO
                     dtCliente = new DataTable();
 
                     sSelectCl = "select Codigo idERP, Nombre, '' Alias, Direccion, Telefono Telefono1, '' Telefono2,"+ 
-                    " CedulaJuridica Contribuyente, 'ND' Pais, '' UsaTarjeta, '' VencimientoTarjeta, Email,"+
+                    " CedulaJuridica Contribuyente, 'CRI' Pais, '' UsaTarjeta, '' VencimientoTarjeta, Email,"+
                     " Provincia, Canton, 'S' Activo, (select CategoriaConsul from " + Consultas.sqlCon.COMPAÑIA + ".NV_GLOBALES) Categoria from " + Consultas.sqlCon.COMPAÑIA+".NV_CONSULTORAS where Codigo = '"+txtCodigo.Valor+"'";
 
                     lbOk = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);

@@ -2156,8 +2156,10 @@ namespace KOLEGIO
 				estado = "Inactivo";
 			else if (estado.Equals("S"))
 				estado = "Sancionado";
+            else if (estado.Equals("N"))
+                estado = "No tiene Regente";
 
-			return estado;
+            return estado;
 		}
 
 		public string obtenerEstadoGestionCobro(string estado)

@@ -22,6 +22,7 @@ namespace KOLEGIO
         private bool estadoCerrado = false;
         bool crearHistorialCanon = false, validarFechas = false;
         private bool requiereRevisionEstado = false;
+        private bool CambioEnCategorias = false;
 
         public frmEstablecimientosEdicion(List<string> valoresPk)
             : base(valoresPk)
@@ -307,7 +308,8 @@ namespace KOLEGIO
         {
             //string sQuery = "SELECT CodigoCategoria,NombreCategoria FROM " + Consultas.sqlCon.COMPAÑIA +
             //    ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "'";
-            string sQuery = "SELECT t1.CodigoCategoria,t2.NombreCategoria" +
+
+            string sQuery = "SELECT t1.CodigoCategoria,t2.NombreCategoria, t1.Estado" +
                    " FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS_CATEGORIAS t1" +
                    " JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_CATEGORIAS t2 ON t1.CodigoCategoria = t2.CodigoCategoria" +
                    " WHERE t1.NumRegistroEstablecimiento = '" + txtNumRegistro.Valor + "'";
@@ -317,8 +319,10 @@ namespace KOLEGIO
             {
                 foreach (DataRow row in dtCategorias.Rows)
                 {
-                    dgvCategorias.Rows.Add(row["CodigoCategoria"].ToString(), row["NombreCategoria"].ToString());
+                    dgvCategorias.Rows.Add(row["CodigoCategoria"].ToString(), row["NombreCategoria"].ToString(), fInternas.obtenerEstado(row["Estado"].ToString()));
                 }
+
+                colorearFilasCategorias();
             }
             else
                 MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -734,6 +738,7 @@ namespace KOLEGIO
 
         private void cargarRegentes()
         {
+            dgvRegentes.Rows.Clear();
             //string sQuery = "SELECT T1.NumeroColegiado,T2.NumeroColegiado as NCole,T2.Nombre,T3.NombreCategoria,T3.CodigoCategoria,t1.Cobrador,t4.NOMBRE as NomCobrador,T1.FechaAprobacion,T1.SesionAprobacion,CASE T1.Estado WHEN 'A' THEN 'Activo' else 'Inactivo' END AS Estado FROM " + Consultas.sqlCon.COMPAÑIA +
             string sQuery = "SELECT T1.NumeroColegiado,T2.NumeroColegiado as NCole,T2.Nombre,T3.NombreCategoria,T3.CodigoCategoria,t1.Cobrador,t4.NOMBRE as NomCobrador,T1.FechaAprobacion,T1.SesionAprobacion,T1.Estado FROM " + Consultas.sqlCon.COMPAÑIA +
                 ".NV_REGENTES_ESTABLECIMIENTOS T1 JOIN " +Consultas.sqlCon.COMPAÑIA+".NV_COLEGIADO T2 ON T1.NumeroColegiado=T2.IdColegiado "+
@@ -952,13 +957,25 @@ namespace KOLEGIO
 
             bool lbOk = true;
 
-            lbOk = guardarCategorias(ref error);
+            /*MARLON LORIA SOLANO 15/05/2025
+              SE DEBE VALIDAR SI SE REALIZAN CAMBION EN LAS REGENCIAS ASOCIADOS A CATEGORIAS INACTIVAS PARA QUE EMITA 
+              UNA ADVERTENCIA EN CASO QUE SE REQUIERA HABILITAR UNA REGENCIA PARA UNA CATEGORIA INACTIVA.
+              ESTA VALIDACION SOLO SE REALIZA SI NO SE HAN MODIFICADO LAS CATEGORIAS.  SI LAS CATEGORIAS HAN SIDO MODIFICADAS
+              LA PRIORIDAD ES EL CAMBIO DE ESTADO DE LA CATEGORIA*/
+
+            if (!CambioEnCategorias)
+                lbOk = VerificaEstadoRegenciasVrsCategorias(ref error);
+
+            if (lbOk)
+                lbOk = guardarCategorias(ref error);
 
             if (lbOk)
                 lbOk = guardarHorarios(ref error);
 
             if (lbOk)
                 lbOk = guardarInformes(ref error);
+
+            
 
             if (lbOk)
                 lbOk = guardarRegentes(ref error);
@@ -971,6 +988,10 @@ namespace KOLEGIO
 
             if (lbOk)
                 lbOk = clienteERP(ref error);
+
+            /*MARLON LORIA SOLANO 15/05/2025*/
+            if (lbOk)
+                CambioEnCategorias = false;
 
             return lbOk;
             //Listado list = new Listado();
@@ -1084,33 +1105,61 @@ namespace KOLEGIO
         private bool guardarCategorias(ref string error)
         {
             Listado list = new Listado();
-            list.COLUMNAS = "NumRegistroEstablecimiento,CodigoCategoria,NombreCategoria";
+            list.COLUMNAS = "NumRegistroEstablecimiento,CodigoCategoria,NombreCategoria,Estado";
             list.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
             list.TABLA = "NV_ESTABLECIMIENTOS_CATEGORIAS";
             bool lbOk = true;
             try
             {
                 /*marlon loria.  No se deben eliminar las categorias de los establecimientos*/
-                //string sQuery = "DELETE FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "'";
+            //string sQuery = "DELETE FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "'";
 
-                //lbOk = Consultas.ejecutarSentencia(sQuery, ref error);
+            //lbOk = Consultas.ejecutarSentencia(sQuery, ref error);
 
-                //if (lbOk)
-                //{
-                    foreach (DataGridViewRow row in dgvCategorias.Rows)
+            //if (lbOk)
+            //{
+            foreach (DataGridViewRow row in dgvCategorias.Rows)
+                {
+                        
+                    parametros.Clear();
+                    list.COLUMNAS_PK.Clear();
+                    list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
+                    list.COLUMNAS_PK.Add("CodigoCategoria");
+                    parametros.Add(txtNumRegistro.Valor);
+                    parametros.Add(row.Cells["colCodigoCategoria"].Value.ToString());
+                    parametros.Add(row.Cells["colDescripcionCat"].Value.ToString());
+                    parametros.Add(row.Cells["colEstadoCat"].Value.ToString().Substring(0,1).ToString());
+
+                    parametros.Add(txtNumRegistro.Valor);
+                    list.FILTRO = " WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "' AND CodigoCategoria='" + row.Cells["colCodigoCategoria"].Value.ToString() + "'";
+                    
+                    if (!ExisteCategoria(row.Cells["colCodigoCategoria"].Value.ToString(), txtNumRegistro.Valor))
                     {
-                        if (!ExisteCategoria(row.Cells["colCodigoCategoria"].Value.ToString(), txtNumRegistro.Valor))
+                        lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
+                    }
+                    else{
+                        lbOk = Consultas.actualizar(parametros, list, identificadorFormulario, ref error);
+                    }
+
+                    foreach (DataGridViewRow rowReg in dgvRegentes.Rows)
+                    {
+                        if (rowReg.Cells["colCodCategoria"].Value.ToString() == row.Cells["colCodigoCategoria"].Value.ToString() &&
+                            row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "I")
                         {
-                            parametros.Clear();
-                            list.COLUMNAS_PK.Clear();
-                            list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
-                            list.COLUMNAS_PK.Add("CodigoCategoria");
-                            parametros.Add(txtNumRegistro.Valor);
-                            parametros.Add(row.Cells["colCodigoCategoria"].Value.ToString());
-                            parametros.Add(row.Cells["colDescripcionCat"].Value.ToString());
-                            lbOk = Consultas.insertar(parametros, list, identificadorFormulario, ref error);
+                            rowReg.Cells["colEstado"].Value = "Inactivo";
+                        }
+                        else
+                        {
+                            if (rowReg.Cells["colCodCategoria"].Value.ToString() == row.Cells["colCodigoCategoria"].Value.ToString() &&
+                            row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "N")
+                            {
+                                rowReg.Cells["colEstado"].Value = "Inactivo";
+                            }
                         }
                     }
+                    colorearFilas();
+                }
+                    
                 //}
             }
             catch (Exception ex)
@@ -1120,6 +1169,26 @@ namespace KOLEGIO
             }
             return lbOk;
         }
+
+        private bool VerificaEstadoRegenciasVrsCategorias(ref string error)
+        {
+            error = "";
+            foreach (DataGridViewRow row in dgvCategorias.Rows)
+            {
+                foreach (DataGridViewRow rowReg in dgvRegentes.Rows)
+                {
+                    if (rowReg.Cells["colCodCategoria"].Value.ToString() == row.Cells["colCodigoCategoria"].Value.ToString() &&
+                        (row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "I" || row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "N") &&
+                        rowReg.Cells["colEstado"].Value.ToString().Substring(0, 1).ToString() == "A")
+                    {
+                        error = $"Existe una regencia en la categoría {rowReg.Cells["colNombreCategoria"].Value.ToString()} con estado ACTIVO, sin embargo esta categoría se encuentra en estado INACTIVA o NO TIENE REGENTE para el establecimiento.  Para poder guardar el registro se debe activar la categoría o inactivar la regencia para esa categoría.";
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
 
         private bool ExisteCategoria(string categoria, string establecimiento)
         {
@@ -1561,7 +1630,7 @@ namespace KOLEGIO
         {
             if (Consultas.tienePrivilegios(Consultas.Usuario, Constantes.ESTABLECIMIENTO_EDITAR))
             {
-                dgvCategorias.Rows.Add("", "");
+                dgvCategorias.Rows.Add("", "","Activo");
             }
             else
                 MessageBox.Show("No tiene privilegios suficientes para acceder a esta opción.", "KOLEGIO Privilegios", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -1976,7 +2045,7 @@ namespace KOLEGIO
         {
             //bool ok = true;
             Listado listP = new Listado();
-            listP.COLUMNAS = "CodigoCategoria as Categoría,NombreCategoria as Nombre";
+            listP.COLUMNAS = "CodigoCategoria as Categoría,NombreCategoria as Nombre, Estado";
             listP.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
             listP.TABLA = "NV_ESTABLECIMIENTOS_CATEGORIAS";
             listP.ORDERBY = "order by CodigoCategoria";
@@ -2116,16 +2185,21 @@ namespace KOLEGIO
             {
                 if (dgvCategorias.RowCount > 0)
                 {
-                    if (MessageBox.Show("¿Está seguro que desea borrar este registro?", "Borrar", MessageBoxButtons.YesNo,
+                    //AJUSTES PARA INACTIVAR UNA CATEGORIA
+                    if (MessageBox.Show("¿Está seguro que desea inactivar este registro?", "Actualizar", MessageBoxButtons.YesNo,
                                   MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
                     {
-                        string sQuery = "DELETE FROM " + Consultas.sqlCon.COMPAÑIA +
-                            ".NV_ESTABLECIMIENTOS_CATEGORIAS WHERE CodigoCategoria='"
-                            + dgvCategorias.CurrentCell.OwningRow.Cells["colCodigoCategoria"].Value.ToString() + "'";
+                        string sQuery = "UPDATE " + Consultas.sqlCon.COMPAÑIA +
+                            ".NV_ESTABLECIMIENTOS_CATEGORIAS SET ESTADO='I' WHERE CodigoCategoria='"
+                            + dgvCategorias.CurrentCell.OwningRow.Cells["colCodigoCategoria"].Value.ToString() + "' AND NumRegistroEstablecimiento = '" + txtNumRegistro.Valor + "'";
 
                         if (Consultas.ejecutarSentencia(sQuery, ref error))
                         {
-                            dgvCategorias.Rows.Remove(dgvCategorias.CurrentCell.OwningRow);
+                            dgvCategorias.CurrentCell.OwningRow.Cells["colEstadoCat"].Value = "Inactivo";
+                            colorearFilasCategorias();
+                            btnGuardar.Enabled = true;
+                            btnGuardarSalir.Enabled = true;
+                            CambioEnCategorias = true;
                         }
                         else
                             MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2715,6 +2789,28 @@ namespace KOLEGIO
             }
         }
 
+        private void colorearFilasCategorias()
+        {
+            foreach (DataGridViewRow row in dgvCategorias.Rows)
+            {
+                switch (dgvCategorias.Rows[row.Index].Cells["colEstadoCat"].Value.ToString())
+                {
+                    case "Inactivo":
+                        dgvCategorias.Rows[row.Index].DefaultCellStyle.BackColor = Color.Red;
+                        break;
+                    case "Activo":
+                        dgvCategorias.Rows[row.Index].DefaultCellStyle.BackColor = Color.White;
+                        break;
+                    case "No tiene Regente":
+                        dgvCategorias.Rows[row.Index].DefaultCellStyle.BackColor = Color.LightGray;
+                        break;
+                }
+                    
+              
+                    
+            }
+        }
+
         private void dgvRegentes_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             DataGridViewComboBoxEditingControl dgvCombo = e.Control as DataGridViewComboBoxEditingControl;
@@ -2728,6 +2824,28 @@ namespace KOLEGIO
                 dgvCombo.SelectedIndexChanged -= new EventHandler(dvgCombo_SelectedIndexChanged);
 
                 dgvCombo.SelectedIndexChanged += new EventHandler(dvgCombo_SelectedIndexChanged);
+            }
+
+        }
+
+        /// <summary>
+        /// Activa cambio de estado en datagrid de categorias
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgvCategoria_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            DataGridViewComboBoxEditingControl dgvCombo = e.Control as DataGridViewComboBoxEditingControl;
+
+            if (dgvCombo != null)
+            {
+                //
+                // se remueve el handler previo que pudiera tener asociado, a causa ediciones previas de la celda
+                // evitando asi que se ejecuten varias veces el evento
+                //
+                dgvCombo.SelectedIndexChanged -= new EventHandler(dgvComboCat_SelectedIndexChanged);
+
+                dgvCombo.SelectedIndexChanged += new EventHandler(dgvComboCat_SelectedIndexChanged);
             }
 
         }
@@ -2773,6 +2891,74 @@ namespace KOLEGIO
             
         }
 
+         /*Marlon Loría Solano
+         * 2025-05-12*/
+        /// <summary>
+        /// Ajuste para colorear estado inactivo de catagoria
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgvComboCat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox combo = sender as ComboBox;
+
+            DataGridViewRow row = dgvCategorias.CurrentRow;
+
+            if (dgvRegentes.Rows.Count > 0 && ExisteCategoria(row.Cells["colCodigoCategoria"].Value.ToString(), txtNumRegistro.Valor))
+            {
+                if (row.Cells["colEstadoCat"].Value != null && row.Cells["colEstadoCat"].Value.ToString() != combo.SelectedItem.ToString())
+                {
+                    if (MessageBox.Show("¿Desea realizar el cambio de Estado de la Categoría?", "Validación", MessageBoxButtons.YesNo,
+                              MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        if (combo.SelectedItem.Equals("Inactivo"))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.Red;
+                            row.Cells["colEstadoCat"].Value = "Inactivo";
+                        }
+                        else
+                        {
+                            if (combo.SelectedItem.Equals("Activo"))
+                            {
+                                row.DefaultCellStyle.BackColor = Color.White;
+                                row.Cells["colEstadoCat"].Value = "Activo";
+                            }
+                            else
+                            {
+                                row.DefaultCellStyle.BackColor = Color.LightGray;
+                                row.Cells["colEstadoCat"].Value = "No tiene Regente";
+                            }
+                        }
+                        
+                        CambioEnCategorias = true; 
+                    }
+                    else
+                    {
+                        combo.SelectedItem = row.Cells["colEstado"].Value;
+                    }
+
+                }
+                else
+                {
+                    
+                    if (combo.SelectedItem.Equals("Inactivo"))
+                        row.DefaultCellStyle.BackColor = Color.Red;
+                    else
+                    {
+                        if (combo.SelectedItem.Equals("Activo"))
+                            row.DefaultCellStyle.BackColor = Color.White;
+                        else
+                            row.DefaultCellStyle.BackColor = Color.LightGray;
+                    }
+                        
+
+                }
+                btnGuardar.Enabled = true;
+                btnGuardarSalir.Enabled = true;
+            }
+
+        }
+
         private bool validarExistencia(string colegiado, string estable, string categ)
         {
             bool existe = true;
@@ -2791,6 +2977,8 @@ namespace KOLEGIO
 
             return existe;
         }
+
+        
 
         private void frmEstablecimientosEdicion_Load(object sender, EventArgs e)
         {

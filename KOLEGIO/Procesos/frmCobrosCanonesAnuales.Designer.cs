@@ -37,6 +37,7 @@
             this.btnResize = new System.Windows.Forms.ToolStripButton();
             this.btnSalir = new System.Windows.Forms.ToolStripButton();
             this.dgvCanones = new System.Windows.Forms.DataGridView();
+            this.Aplicar = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.colIdentificador = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCedulaJuridica = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colNumeroColegiado = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -64,6 +65,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cmbProcesos = new Framework.UserControls.cmbSaseg();
             this.btnGenerar = new System.Windows.Forms.Button();
+            this.chkMasivo = new System.Windows.Forms.CheckBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCanones)).BeginInit();
             this.SuspendLayout();
@@ -143,6 +145,7 @@
             this.dgvCanones.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dgvCanones.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCanones.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Aplicar,
             this.colIdentificador,
             this.colCedulaJuridica,
             this.colNumeroColegiado,
@@ -157,6 +160,12 @@
             this.dgvCanones.RowHeadersVisible = false;
             this.dgvCanones.Size = new System.Drawing.Size(921, 390);
             this.dgvCanones.TabIndex = 3;
+            this.dgvCanones.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCanones_CellClick);
+            // 
+            // Aplicar
+            // 
+            this.Aplicar.HeaderText = "Aplicar";
+            this.Aplicar.Name = "Aplicar";
             // 
             // colIdentificador
             // 
@@ -243,7 +252,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(486, 38);
+            this.label27.Location = new System.Drawing.Point(556, 45);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(42, 13);
             this.label27.TabIndex = 273;
@@ -252,7 +261,7 @@
             // 
             // txtCultivo
             // 
-            this.txtCultivo.Location = new System.Drawing.Point(534, 35);
+            this.txtCultivo.Location = new System.Drawing.Point(604, 42);
             this.txtCultivo.Name = "txtCultivo";
             this.txtCultivo.Size = new System.Drawing.Size(63, 20);
             this.txtCultivo.TabIndex = 275;
@@ -260,7 +269,7 @@
             // 
             // txtDescCultivo
             // 
-            this.txtDescCultivo.Location = new System.Drawing.Point(603, 35);
+            this.txtDescCultivo.Location = new System.Drawing.Point(673, 42);
             this.txtDescCultivo.Name = "txtDescCultivo";
             this.txtDescCultivo.ReadOnly = true;
             this.txtDescCultivo.Size = new System.Drawing.Size(260, 20);
@@ -287,7 +296,7 @@
             // 
             this.chkGenTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkGenTotal.Checked = false;
-            this.chkGenTotal.Location = new System.Drawing.Point(347, 42);
+            this.chkGenTotal.Location = new System.Drawing.Point(323, 41);
             this.chkGenTotal.Name = "chkGenTotal";
             this.chkGenTotal.Size = new System.Drawing.Size(122, 17);
             this.chkGenTotal.TabIndex = 278;
@@ -391,11 +400,24 @@
             this.btnGenerar.UseVisualStyleBackColor = false;
             this.btnGenerar.Click += new System.EventHandler(this.btnGenerar_Click);
             // 
+            // chkMasivo
+            // 
+            this.chkMasivo.AutoSize = true;
+            this.chkMasivo.Location = new System.Drawing.Point(461, 42);
+            this.chkMasivo.Name = "chkMasivo";
+            this.chkMasivo.Size = new System.Drawing.Size(60, 17);
+            this.chkMasivo.TabIndex = 301;
+            this.chkMasivo.Text = "Masivo";
+            this.chkMasivo.UseVisualStyleBackColor = true;
+            this.chkMasivo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.chkMasivo_MouseClick);
+
+            // 
             // frmCobrosCanonesAnuales
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(948, 529);
+            this.Controls.Add(this.chkMasivo);
             this.Controls.Add(this.btnGenerar);
             this.Controls.Add(this.cmbProcesos);
             this.Controls.Add(this.label2);
@@ -452,14 +474,16 @@
         private System.Windows.Forms.Label label2;
         private Framework.UserControls.cmbSaseg cmbProcesos;
         private System.Windows.Forms.Button btnGenerar;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colIdentificador;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colCedulaJuridica;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colNumeroColegiado;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colNombre;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colEmail;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colUltimoCobro;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colCobrador;
-		private System.Windows.Forms.DataGridViewImageColumn colResultado;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colObservaciones;
-	}
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Aplicar;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colIdentificador;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCedulaJuridica;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colNumeroColegiado;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colNombre;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colEmail;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colUltimoCobro;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCobrador;
+        private System.Windows.Forms.DataGridViewImageColumn colResultado;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colObservaciones;
+        private System.Windows.Forms.CheckBox chkMasivo;
+    }
 }
