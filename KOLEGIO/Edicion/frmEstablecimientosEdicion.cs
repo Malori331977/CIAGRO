@@ -1125,10 +1125,23 @@ namespace KOLEGIO
                     list.COLUMNAS_PK.Clear();
                     list.COLUMNAS_PK.Add("NumRegistroEstablecimiento");
                     list.COLUMNAS_PK.Add("CodigoCategoria");
+
                     parametros.Add(txtNumRegistro.Valor);
                     parametros.Add(row.Cells["colCodigoCategoria"].Value.ToString());
                     parametros.Add(row.Cells["colDescripcionCat"].Value.ToString());
-                    parametros.Add(row.Cells["colEstadoCat"].Value.ToString().Substring(0,1).ToString());
+
+                    switch (row.Cells["colEstadoCat"].Value.ToString())
+                    {
+                        case "Inactivo":
+                            parametros.Add("I");
+                            break;
+                        case "Activo":
+                            parametros.Add("A");
+                            break;
+                        case "Sin Regente":
+                            parametros.Add("N");
+                            break;
+                    }
 
                     parametros.Add(txtNumRegistro.Valor);
                     list.FILTRO = " WHERE NumRegistroEstablecimiento='" + txtNumRegistro.Valor + "' AND CodigoCategoria='" + row.Cells["colCodigoCategoria"].Value.ToString() + "'";
@@ -1151,7 +1164,7 @@ namespace KOLEGIO
                         else
                         {
                             if (rowReg.Cells["colCodCategoria"].Value.ToString() == row.Cells["colCodigoCategoria"].Value.ToString() &&
-                            row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "N")
+                            row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "S")
                             {
                                 rowReg.Cells["colEstado"].Value = "Inactivo";
                             }
@@ -1178,10 +1191,10 @@ namespace KOLEGIO
                 foreach (DataGridViewRow rowReg in dgvRegentes.Rows)
                 {
                     if (rowReg.Cells["colCodCategoria"].Value.ToString() == row.Cells["colCodigoCategoria"].Value.ToString() &&
-                        (row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "I" || row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "N") &&
+                        (row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "I" || row.Cells["colEstadoCat"].Value.ToString().Substring(0, 1).ToString() == "S") &&
                         rowReg.Cells["colEstado"].Value.ToString().Substring(0, 1).ToString() == "A")
                     {
-                        error = $"Existe una regencia en la categoría {rowReg.Cells["colNombreCategoria"].Value.ToString()} con estado ACTIVO, sin embargo esta categoría se encuentra en estado INACTIVA o NO TIENE REGENTE para el establecimiento.  Para poder guardar el registro se debe activar la categoría o inactivar la regencia para esa categoría.";
+                        error = $"Existe una regencia en la categoría {rowReg.Cells["colNombreCategoria"].Value.ToString()} con estado ACTIVO, sin embargo esta categoría se encuentra en estado INACTIVA o SIN REGENTE para el establecimiento.  Para poder guardar el registro se debe activar la categoría o inactivar la regencia para esa categoría.";
                         return false;
                     }
                 }
@@ -2801,7 +2814,7 @@ namespace KOLEGIO
                     case "Activo":
                         dgvCategorias.Rows[row.Index].DefaultCellStyle.BackColor = Color.White;
                         break;
-                    case "No tiene Regente":
+                    case "Sin Regente":
                         dgvCategorias.Rows[row.Index].DefaultCellStyle.BackColor = Color.LightGray;
                         break;
                 }
@@ -2926,7 +2939,7 @@ namespace KOLEGIO
                             else
                             {
                                 row.DefaultCellStyle.BackColor = Color.LightGray;
-                                row.Cells["colEstadoCat"].Value = "No tiene Regente";
+                                row.Cells["colEstadoCat"].Value = "Sin Regente";
                             }
                         }
                         
@@ -2934,7 +2947,7 @@ namespace KOLEGIO
                     }
                     else
                     {
-                        combo.SelectedItem = row.Cells["colEstado"].Value;
+                        combo.SelectedItem = row.Cells["colEstadoCat"].Value;
                     }
 
                 }
