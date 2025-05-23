@@ -2157,7 +2157,7 @@ namespace KOLEGIO
 			else if (estado.Equals("S"))
 				estado = "Sancionado";
             else if (estado.Equals("N"))
-                estado = "No tiene Regente";
+                estado = "Sin Regente";
 
             return estado;
 		}

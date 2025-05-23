@@ -36,9 +36,6 @@
             this.btnNuevaCategoria = new System.Windows.Forms.ToolStripButton();
             this.btnEliminaCategoria = new System.Windows.Forms.ToolStripButton();
             this.dgvCategorias = new System.Windows.Forms.DataGridView();
-            this.colCodigoCategoria = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDescripcionCat = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colEstadoCat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.headerCategorias = new System.Windows.Forms.Panel();
             this.label31 = new System.Windows.Forms.Label();
             this.tpRegentes = new System.Windows.Forms.TabPage();
@@ -177,6 +174,9 @@
             this.label12 = new System.Windows.Forms.Label();
             this.dtpFechaCanon = new System.Windows.Forms.DateTimePicker();
             this.label33 = new System.Windows.Forms.Label();
+            this.colCodigoCategoria = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescripcionCat = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEstadoCat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dtDatos)).BeginInit();
             this.tabControl.SuspendLayout();
             this.tpBasicos.SuspendLayout();
@@ -369,7 +369,7 @@
             this.gbCategorias.Controls.Add(this.dgvCategorias);
             this.gbCategorias.Location = new System.Drawing.Point(39, 48);
             this.gbCategorias.Name = "gbCategorias";
-            this.gbCategorias.Size = new System.Drawing.Size(62, 0);
+            this.gbCategorias.Size = new System.Drawing.Size(4, 0);
             this.gbCategorias.TabIndex = 43;
             this.gbCategorias.TabStop = false;
             this.gbCategorias.Text = "Información de Categorías";
@@ -432,34 +432,11 @@
             this.dgvCategorias.MultiSelect = false;
             this.dgvCategorias.Name = "dgvCategorias";
             this.dgvCategorias.RowHeadersVisible = false;
-            this.dgvCategorias.Size = new System.Drawing.Size(53, 2);
+            this.dgvCategorias.Size = new System.Drawing.Size(0, 2);
             this.dgvCategorias.TabIndex = 0;
             this.dgvCategorias.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvCategoria_EditingControlShowing);
             this.dgvCategorias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvCategorias_KeyDown);
             this.dgvCategorias.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dgvCategorias_MouseDoubleClick);
-            // 
-            // colCodigoCategoria
-            // 
-            this.colCodigoCategoria.FillWeight = 48.38868F;
-            this.colCodigoCategoria.HeaderText = "Código";
-            this.colCodigoCategoria.Name = "colCodigoCategoria";
-            this.colCodigoCategoria.ReadOnly = true;
-            // 
-            // colDescripcionCat
-            // 
-            this.colDescripcionCat.FillWeight = 142.2627F;
-            this.colDescripcionCat.HeaderText = "Descripción";
-            this.colDescripcionCat.Name = "colDescripcionCat";
-            this.colDescripcionCat.ReadOnly = true;
-            // 
-            // colEstadoCat
-            // 
-            this.colEstadoCat.HeaderText = "Estado";
-            this.colEstadoCat.Items.AddRange(new object[] {
-            "Activo",
-            "Inactivo",
-            "No tiene Regente"});
-            this.colEstadoCat.Name = "colEstadoCat";
             // 
             // headerCategorias
             // 
@@ -469,7 +446,7 @@
             this.headerCategorias.Controls.Add(this.label31);
             this.headerCategorias.Location = new System.Drawing.Point(3, 3);
             this.headerCategorias.Name = "headerCategorias";
-            this.headerCategorias.Size = new System.Drawing.Size(134, 21);
+            this.headerCategorias.Size = new System.Drawing.Size(76, 21);
             this.headerCategorias.TabIndex = 39;
             // 
             // label31
@@ -503,7 +480,7 @@
             this.gbRegentes.Controls.Add(this.dgvRegentes);
             this.gbRegentes.Location = new System.Drawing.Point(12, 61);
             this.gbRegentes.Name = "gbRegentes";
-            this.gbRegentes.Size = new System.Drawing.Size(113, 0);
+            this.gbRegentes.Size = new System.Drawing.Size(55, 0);
             this.gbRegentes.TabIndex = 44;
             this.gbRegentes.TabStop = false;
             // 
@@ -581,7 +558,7 @@
             this.dgvRegentes.Location = new System.Drawing.Point(6, 31);
             this.dgvRegentes.Name = "dgvRegentes";
             this.dgvRegentes.RowHeadersVisible = false;
-            this.dgvRegentes.Size = new System.Drawing.Size(107, 10);
+            this.dgvRegentes.Size = new System.Drawing.Size(49, 10);
             this.dgvRegentes.TabIndex = 43;
             this.dgvRegentes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRegentes_CellClick);
             this.dgvRegentes.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvRegentes_CurrentCellDirtyStateChanged);
@@ -657,7 +634,7 @@
             this.headerRegentes.Controls.Add(this.label32);
             this.headerRegentes.Location = new System.Drawing.Point(3, 3);
             this.headerRegentes.Name = "headerRegentes";
-            this.headerRegentes.Size = new System.Drawing.Size(134, 21);
+            this.headerRegentes.Size = new System.Drawing.Size(76, 21);
             this.headerRegentes.TabIndex = 40;
             // 
             // label32
@@ -1099,7 +1076,7 @@
             this.headerInformes.Controls.Add(this.label21);
             this.headerInformes.Location = new System.Drawing.Point(3, 3);
             this.headerInformes.Name = "headerInformes";
-            this.headerInformes.Size = new System.Drawing.Size(134, 21);
+            this.headerInformes.Size = new System.Drawing.Size(76, 21);
             this.headerInformes.TabIndex = 44;
             // 
             // label21
@@ -1122,7 +1099,7 @@
             this.gbInformes.Controls.Add(this.dgvInformes);
             this.gbInformes.Location = new System.Drawing.Point(26, 50);
             this.gbInformes.Name = "gbInformes";
-            this.gbInformes.Size = new System.Drawing.Size(93, 0);
+            this.gbInformes.Size = new System.Drawing.Size(35, 0);
             this.gbInformes.TabIndex = 43;
             this.gbInformes.TabStop = false;
             this.gbInformes.Text = "Informes Realizados";
@@ -1198,7 +1175,7 @@
             this.dgvInformes.MultiSelect = false;
             this.dgvInformes.Name = "dgvInformes";
             this.dgvInformes.RowHeadersVisible = false;
-            this.dgvInformes.Size = new System.Drawing.Size(84, 0);
+            this.dgvInformes.Size = new System.Drawing.Size(26, 0);
             this.dgvInformes.TabIndex = 0;
             this.dgvInformes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInformes_CellClick);
             this.dgvInformes.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvInformes_CurrentCellDirtyStateChanged);
@@ -1319,7 +1296,7 @@
             this.headerVisitas.Controls.Add(this.label22);
             this.headerVisitas.Location = new System.Drawing.Point(3, 3);
             this.headerVisitas.Name = "headerVisitas";
-            this.headerVisitas.Size = new System.Drawing.Size(134, 21);
+            this.headerVisitas.Size = new System.Drawing.Size(76, 21);
             this.headerVisitas.TabIndex = 45;
             // 
             // label22
@@ -2030,7 +2007,7 @@
             this.panel2.Controls.Add(this.label12);
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(134, 21);
+            this.panel2.Size = new System.Drawing.Size(76, 21);
             this.panel2.TabIndex = 46;
             // 
             // label12
@@ -2062,6 +2039,29 @@
             this.label33.TabIndex = 66;
             this.label33.Text = "Fecha Canon:";
             this.label33.Visible = false;
+            // 
+            // colCodigoCategoria
+            // 
+            this.colCodigoCategoria.FillWeight = 48.38868F;
+            this.colCodigoCategoria.HeaderText = "Código";
+            this.colCodigoCategoria.Name = "colCodigoCategoria";
+            this.colCodigoCategoria.ReadOnly = true;
+            // 
+            // colDescripcionCat
+            // 
+            this.colDescripcionCat.FillWeight = 142.2627F;
+            this.colDescripcionCat.HeaderText = "Descripción";
+            this.colDescripcionCat.Name = "colDescripcionCat";
+            this.colDescripcionCat.ReadOnly = true;
+            // 
+            // colEstadoCat
+            // 
+            this.colEstadoCat.HeaderText = "Estado";
+            this.colEstadoCat.Items.AddRange(new object[] {
+            "Activo",
+            "Inactivo",
+            "Sin Regente"});
+            this.colEstadoCat.Name = "colEstadoCat";
             // 
             // frmEstablecimientosEdicion
             // 

@@ -801,6 +801,9 @@
     <EmbeddedResource Include="Listados\FrmControlVersionesList.resx">
       <DependentUpon>FrmControlVersionesList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Listados\frmRegentesList.resx">
+      <DependentUpon>frmRegentesList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Listados\FrmVidaSilvestreList.resx">
       <DependentUpon>FrmVidaSilvestreList.cs</DependentUpon>
     </EmbeddedResource>
