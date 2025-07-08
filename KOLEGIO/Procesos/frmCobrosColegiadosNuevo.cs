@@ -199,9 +199,10 @@ namespace KOLEGIO
                 DataTable dtAplicaClie = new DataTable();
                 DateTime fechaActu = DateTime.Now;
                 DateTime fechaDgv = DateTime.Now;
-                DateTime mesCobro = DateTime.Now;
-                fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, /*DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Day*/ 25);
 
+                DateTime mesCobro = DateTime.Now;
+                DateTime mesAnteriorCobro = DateTime.Now.AddMonths(-1);
+                fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, /*DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Day*/ 25);
 
                 //if ((bool)row.Cells["colCheck"].Value)
                 if ((bool)row.Cells["Aplicar"].Value)
@@ -214,6 +215,7 @@ namespace KOLEGIO
                     //if (row.Cells["colUltimoCobro"].Value.ToString().Equals("") || DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()) < fechaActu)
                     if (/*row.Cells["colUltimoCobro"].Value.ToString().Equals("")*//*row.Cells["Último Cobro"].Value.ToString().Equals("") ||*/ fechaDgv < fechaActu)
                     {
+
                         try
                         {
                             Consultas.sqlCon.iniciaTransaccion();
@@ -296,6 +298,8 @@ namespace KOLEGIO
                             row.Cells["Estado"].Value = iList.Images[1];
                             row.Cells["Observaciones"].Value = ex.Message;
                         }
+                        
+                            
                     }
                     else
                     {
@@ -509,13 +513,16 @@ namespace KOLEGIO
 
         private void actualizarMesCobro(string id, string NuevoMesCobro)
         {
-           
+
             foreach (DataGridViewRow row in dgvColegiados.Rows)
             {
+                
                 if (id == row.Cells["Id Colegiado"].Value.ToString())
                 {
                     row.Cells["Último Cobro"].Value = NuevoMesCobro;
                 }
+                
+                
             }
                   
             
@@ -531,7 +538,9 @@ namespace KOLEGIO
 
         private void refrescarDatos()
         {
-            string sQuery = "SELECT t1.IdColegiado,t1.Cedula,t1.NumeroColegiado,t1.Nombre,t2.MesUltimoCobro as UltMesCobro, t1.Cobrador"+ 
+            string sQuery = "SELECT t1.IdColegiado,t1.Cedula,t1.NumeroColegiado,t1.Nombre," +
+                            "case when t2.MesUltimoCobro!=cast(convert(varchar(4),datepart(YYYY,DATEADD(MONTH, -1, GETDATE()))) + '-' + convert(varchar(2),datepart(MM,DATEADD(MONTH, -1, GETDATE()))) +'-25' as datetime) and t2.MesUltimoCobro!=cast(convert(varchar(4),datepart(YYYY,GETDATE())) + '-' + convert(varchar(2),datepart(MM,GETDATE())) +'-25' as datetime) then null else t2.MesUltimoCobro end as UltMesCobro, " +
+                            " t1.Cobrador"+ 
                             " FROM "+Consultas.sqlCon.COMPAÑIA+".NV_COLEGIADO t1"+
                             " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_COLEGIATURAS t2 ON t2.IdColegiado = t1.IdColegiado" +
                             " WHERE t1.Condicion = '"+txtCondicion.Text+"'";
@@ -600,7 +609,9 @@ namespace KOLEGIO
 
         private void refrescarDatosGeneracionTotal()
         {
-            string sQuery = "SELECT t1.IdColegiado,t1.Cedula,t1.NumeroColegiado,t1.Nombre,t2.MesUltimoCobro as UltMesCobro, t1.Cobrador" +
+            string sQuery = "SELECT t1.IdColegiado,t1.Cedula,t1.NumeroColegiado,t1.Nombre," +
+                            "case when t2.MesUltimoCobro!=cast(convert(varchar(4),datepart(YYYY,DATEADD(MONTH, -1, GETDATE()))) + '-' + convert(varchar(2),datepart(MM,DATEADD(MONTH, -1, GETDATE()))) +'-25' as datetime) and t2.MesUltimoCobro!=cast(convert(varchar(4),datepart(YYYY,GETDATE())) + '-' + convert(varchar(2),datepart(MM,GETDATE())) +'-25' as datetime) then null else t2.MesUltimoCobro end as UltMesCobro, " +
+                            "t1.Cobrador" +
                             " FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
                             " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_COLEGIATURAS t2 ON t2.IdColegiado = t1.IdColegiado"+
                             " WHERE t1.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";

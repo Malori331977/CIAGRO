@@ -752,7 +752,7 @@ namespace KOLEGIO
             {
                 if (Utilitario.BuscaForm("frmCambioCondicion"))
                 {
-                    frmCambioCondicion frm = new frmCambioCondicion();
+                    frmCambioCondicion frm = new frmCambioCondicion(usuario);
                     frm.Show();
                 }
             }

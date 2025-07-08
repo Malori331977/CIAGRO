@@ -780,59 +780,65 @@ namespace KOLEGIO
             #region REAL
             if (esPeritaje)
             {
+                /*MARLON LORIA SOLANO*/
+                /*AJUSTE 2025-04*/
+               /*En el proceso de generación de cánones anuales se debe validar que el perito cumpla las condiciones para la generación de cánones.  
+                * En primer lugar, se debe validar que la institución NO SEA IGUAL A 85 y que el COBRADOR SEA DIFERENTE DE 000, 
+                * si cumple alguna de estas condiciones debe ser excluido de la lista a cobrar.*/
+
                 //sQuery = "SELECT t1.IdColegiado, t2.NumeroColegiado, t2.Nombre, t1.Cobrador FROM "+Consultas.sqlCon.COMPAÑIA+".NV_PERITOS t1"+
                 //" INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado WHERE t1.PagaCanon = 'S'";
                 sQuery = "SELECT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t1.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_PERITOS t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.IdColegiado AND t3.canon = 'PER'" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_EMPRESAS t4 ON t4.CodigoEmpresa = t1.CodigoEmpresa" +
-                        " WHERE t4.PagaCanon = 'S' AND t1.FechaSesionPerdida is null AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
-            }
+                        " WHERE t4.PagaCanon = 'S' AND t1.FechaSesionPerdida is null AND t1.Cobrador!='000' AND t1.CodigoEmpresa !='85' AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
+                }
 
-            if (esPlaguicida)
-            {
+                if (esPlaguicida)
+                {
                 //sQuery = "SELECT DISTINCT t1.IdColegiado, t2.NumeroColegiado, t2.Nombre, t2.Cobrador FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_INVESTIGACION_PLAGUICIDAS_COLEGIADO t1" +
                 //" INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado WHERE t1.PagaCanon = 'S'";
                 sQuery = "SELECT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_INVESTIGACION_PLAGUICIDAS_COLEGIADO t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.IdColegiado AND t3.canon = 'PLAGUI'" +
                         " WHERE t2.PagaCanonPlagui = 'S' AND t1.Activo = 1 AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
-            }
+                }
 
-            if (esViaAerea)
-            {
+                if (esViaAerea)
+                {
                 //sQuery = "SELECT DISTINCT t1.IdColegiado, t2.NumeroColegiado, t2.Nombre, t2.Cobrador FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_VIA_AEREA_COLEGIADO t1" +
                 //" INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado WHERE t1.PagaCanon = 'S'";
                 sQuery = "SELECT t1.IdColegiado, t2.Cedula, t2.NumeroColegiado, t2.Nombre, t2.Cobrador, t3.AñoUltimoCobro, t2.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_VIA_AEREA_COLEGIADO t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t2 ON t2.IdColegiado = t1.IdColegiado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.IdColegiado AND t3.canon = 'AEREA'" +
                         " WHERE t2.PagaCanonAerea = 'S' AND t1.Activo = 1 AND t2.Condicion not in (select CodigoCondicion from " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES where GeneraCobro = 'NO')";
-            }
+                }
 
-            if (esConsultora)
-            {
+                if (esConsultora)
+                {
                 //sQuery = "SELECT t1.Codigo, t1.CedulaJuridica, t1.Nombre FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_CONSULTORAS t1 INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTADOS t2 ON t2.CodigoEstado = t1.Estado WHERE t1.PagaCanon = 'S' and t2.GeneraCobro = 'S'";
                 sQuery = "SELECT t1.Codigo, t1.CedulaJuridica as Cedula, t1.Nombre, t1.Cobrador, t3.AñoUltimoCobro, t1.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_CONSULTORAS t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTADOS t2 ON t2.CodigoEstado = t1.Estado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.Codigo AND t3.canon = 'CONSUL'" +
                         " WHERE t1.PagaCanon = 'S' and t2.GeneraCobro = 'S'";//Agregar cobrador
-            }
+                }
 
-            if (esEstable)
-            {
+                if (esEstable)
+                {
                 //sQuery = "SELECT t1.NumRegistro as Codigo, t1.CedulaJuridica, t1.Nombre FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t1 INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTADOS t2 ON t2.CodigoEstado = t1.Estado WHERE t1.PagaCanon = 'S' and t2.GeneraCobro = 'S'";
                 sQuery = "SELECT t1.NumRegistro as Codigo, t1.CedulaJuridica as Cedula, t1.Nombre, t1.Cobrador, t3.AñoUltimoCobro, t1.Email FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTABLECIMIENTOS t1" +
                         " INNER JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_ESTADOS t2 ON t2.CodigoEstado = t1.Estado" +
                         " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_CANONES_ANUALES t3 ON t3.Identificador = t1.NumRegistro  AND t3.canon = 'ESTABLE'" +
                         " WHERE t1.PagaCanon = 'S' and t2.GeneraCobro = 'S'";
-            }
-            #endregion
+                }
+                #endregion
 
-            DataTable dtIngresos = new DataTable();
+                DataTable dtIngresos = new DataTable();
 
-            string error = "";
-            try
-            {
+                string error = "";
+                try
+                {
                 if(Consultas.fillDataTable(sQuery,ref dtIngresos,ref error))
                 {
                     //dgvColegiados.DataSource = dtIngresos;
@@ -898,149 +904,149 @@ namespace KOLEGIO
                     }
                     lblRegistrosCant.Text = totalRegistros.ToString();
                 }
-            }
-            catch(Exception ex)
-            {
+                }
+                catch(Exception ex)
+                {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                }
 
-        }
+                }
 
-        //private void refrescarDatosGeneracionTotal()
-        //{
-        //    string sQuery = "SELECT t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t2.MesUltimoCobro as UltMesCobro, t1.Cobrador" +
-        //                    " FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
-        //                    " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_COLEGIATURAS t2 ON t2.IdColegiado = t1.IdColegiado";
-        //    DataTable dtIngresos = new DataTable();
-        //    string error = "";
-        //    try
-        //    {
-        //        if (Consultas.fillDataTable(sQuery, ref dtIngresos, ref error))
-        //        {
-        //            //dgvColegiados.DataSource = dtIngresos;
-        //            dgvCanones.Rows.Clear();
-        //            totalRegistros = 0;
-        //            desactivarLabels();
-        //            foreach (DataRow row in dtIngresos.Rows)
-        //            {
-        //                if (row["UltMesCobro"].ToString().Equals(""))
-        //                {
-        //                    totalRegistros += 1;
-        //                    dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
-        //                        row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
-        //                }
-        //                else
-        //                {
-        //                    DateTime fechaactual = DateTime.Now;
-        //                    DateTime fecha = DateTime.Parse(row["UltMesCobro"].ToString());
-        //                    fechaactual = new DateTime(fechaactual.Year, fechaactual.Month, 1);
-        //                    fecha = new DateTime(fecha.Year, fecha.Month, 1);
-        //                    int result = DateTime.Compare(fecha, fechaactual);
-        //                    if (result < 0)
-        //                    {
-        //                        totalRegistros += 1;
-        //                        dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
-        //                            row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
-        //                    }
-        //                }
-        //                //totalRegistros += 1;
-        //                //dgvColegiados.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
-        //                //    row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
-        //            }
-        //            lblRegistrosCant.Text = totalRegistros.ToString();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
+//private void refrescarDatosGeneracionTotal()
+//{
+//    string sQuery = "SELECT t1.IdColegiado,t1.NumeroColegiado,t1.Nombre,t2.MesUltimoCobro as UltMesCobro, t1.Cobrador" +
+//                    " FROM " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1" +
+//                    " LEFT JOIN " + Consultas.sqlCon.COMPAÑIA + ".NV_HISTORIAL_COLEGIATURAS t2 ON t2.IdColegiado = t1.IdColegiado";
+//    DataTable dtIngresos = new DataTable();
+//    string error = "";
+//    try
+//    {
+//        if (Consultas.fillDataTable(sQuery, ref dtIngresos, ref error))
+//        {
+//            //dgvColegiados.DataSource = dtIngresos;
+//            dgvCanones.Rows.Clear();
+//            totalRegistros = 0;
+//            desactivarLabels();
+//            foreach (DataRow row in dtIngresos.Rows)
+//            {
+//                if (row["UltMesCobro"].ToString().Equals(""))
+//                {
+//                    totalRegistros += 1;
+//                    dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
+//                        row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
+//                }
+//                else
+//                {
+//                    DateTime fechaactual = DateTime.Now;
+//                    DateTime fecha = DateTime.Parse(row["UltMesCobro"].ToString());
+//                    fechaactual = new DateTime(fechaactual.Year, fechaactual.Month, 1);
+//                    fecha = new DateTime(fecha.Year, fecha.Month, 1);
+//                    int result = DateTime.Compare(fecha, fechaactual);
+//                    if (result < 0)
+//                    {
+//                        totalRegistros += 1;
+//                        dgvCanones.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
+//                            row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
+//                    }
+//                }
+//                //totalRegistros += 1;
+//                //dgvColegiados.Rows.Add(row["IdColegiado"].ToString(), row["NumeroColegiado"].ToString(),
+//                //    row["Nombre"].ToString(), row["UltMesCobro"].ToString() != "" ? DateTime.Parse(row["UltMesCobro"].ToString()).ToString("MM/yyyy") : "", row["Cobrador"].ToString());
+//            }
+//            lblRegistrosCant.Text = totalRegistros.ToString();
+//        }
+//    }
+//    catch (Exception ex)
+//    {
+//        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
 
-        //}
+//}
 
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+private void btnSalir_Click(object sender, EventArgs e)
+{
+Close();
+}
 
-        private void btnResize_Click(object sender, EventArgs e)
-        {
-            Cursor.Current = Cursors.WaitCursor;
-            dgvCanones.AutoResizeColumns();
-            Cursor.Current = Cursors.Default;
-        }
+private void btnResize_Click(object sender, EventArgs e)
+{
+Cursor.Current = Cursors.WaitCursor;
+dgvCanones.AutoResizeColumns();
+Cursor.Current = Cursors.Default;
+}
 
-        //private void txtCondicion_MouseDoubleClick(object sender, MouseEventArgs e)
-        //{
-        //    if (!txtCultivo.ReadOnly)
-        //    {
-        //        listaCondiciones();
-        //    }
-        //}
+//private void txtCondicion_MouseDoubleClick(object sender, MouseEventArgs e)
+//{
+//    if (!txtCultivo.ReadOnly)
+//    {
+//        listaCondiciones();
+//    }
+//}
 
 
-        //private void listaCondiciones()
-        //{
-        //    Listado listD = new Listado();
-        //    listD.COLUMNAS = "CodigoCondicion as Código,NombreCondicion as Condición,CodigoPlantilla";
-        //   // listD.COLUMNAS = "CodigoCondicion as Código,NombreCondicion as Condición";
-        //    listD.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
-        //    listD.TABLA = "NV_CONDICIONES";
-        //    listD.FILTRO = "where CondicionFallecido != 'S' and CondicionFallecido != 'S' and CodigoCondicion != 'C-07' and  CodigoCondicion != 'C-10' and  CodigoCondicion != 'C-11' and  CodigoCondicion != 'C-13'";
-        //    listD.TITULO_LISTADO = "Condiciones Colegiado";
-        //    listD.COLUMNAS_OCULTAS.Add("CodigoPlantilla");
+//private void listaCondiciones()
+//{
+//    Listado listD = new Listado();
+//    listD.COLUMNAS = "CodigoCondicion as Código,NombreCondicion as Condición,CodigoPlantilla";
+//   // listD.COLUMNAS = "CodigoCondicion as Código,NombreCondicion as Condición";
+//    listD.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
+//    listD.TABLA = "NV_CONDICIONES";
+//    listD.FILTRO = "where CondicionFallecido != 'S' and CondicionFallecido != 'S' and CodigoCondicion != 'C-07' and  CodigoCondicion != 'C-10' and  CodigoCondicion != 'C-11' and  CodigoCondicion != 'C-13'";
+//    listD.TITULO_LISTADO = "Condiciones Colegiado";
+//    listD.COLUMNAS_OCULTAS.Add("CodigoPlantilla");
 
-        //    frmF1 f1 = new frmF1(listD);
-        //    f1.ShowDialog();
-        //    if (f1.item != null)
-        //    {
-        //        txtCultivo.Text = f1.item.SubItems[0].Text;
-        //        txtDescCultivo.Text = f1.item.SubItems[1].Text;
-        //        refrescarDatos();
-        //    }
-        //}
+//    frmF1 f1 = new frmF1(listD);
+//    f1.ShowDialog();
+//    if (f1.item != null)
+//    {
+//        txtCultivo.Text = f1.item.SubItems[0].Text;
+//        txtDescCultivo.Text = f1.item.SubItems[1].Text;
+//        refrescarDatos();
+//    }
+//}
 
-        private void btnGenerar_Click(object sender, EventArgs e)
-        {
-            refrescarDatos();
-        }
+private void btnGenerar_Click(object sender, EventArgs e)
+{
+refrescarDatos();
+}
 
-        private void limpiar()
-        {
-            if(dgvCanones.Rows.Count > 0)
-            {
-                dgvCanones.Rows.Clear();
-            }
-            
-        }
+private void limpiar()
+{
+if(dgvCanones.Rows.Count > 0)
+{
+dgvCanones.Rows.Clear();
+}
 
-        //private void txtCondicion_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyValue == (char)Keys.F1 && !txtCultivo.ReadOnly)
-        //    {
-        //        listaCondiciones();
-        //    }
-        //}
+}
 
-        //private void txtCondicion_TextChanged(object sender, EventArgs e)
-        //{
+//private void txtCondicion_KeyDown(object sender, KeyEventArgs e)
+//{
+//    if (e.KeyValue == (char)Keys.F1 && !txtCultivo.ReadOnly)
+//    {
+//        listaCondiciones();
+//    }
+//}
 
-        //}
+//private void txtCondicion_TextChanged(object sender, EventArgs e)
+//{
 
-        //private void chkGenTotal_MouseClick(object sender, MouseEventArgs e)
-        //{
-        //    if (chkGenTotal.Checked)
-        //    {
-        //        txtCultivo.ReadOnly = true;
-        //        txtCultivo.Clear();
-        //        txtDescCultivo.Clear();
-        //        refrescarDatosGeneracionTotal();
-        //    }
-        //    else
-        //    {
-        //        limpiar();
-        //        txtCultivo.ReadOnly = false;
-        //    }
-            
-        //}
-    }
+//}
+
+//private void chkGenTotal_MouseClick(object sender, MouseEventArgs e)
+//{
+//    if (chkGenTotal.Checked)
+//    {
+//        txtCultivo.ReadOnly = true;
+//        txtCultivo.Clear();
+//        txtDescCultivo.Clear();
+//        refrescarDatosGeneracionTotal();
+//    }
+//    else
+//    {
+//        limpiar();
+//        txtCultivo.ReadOnly = false;
+//    }
+
+//}
+}
 }

@@ -23,7 +23,7 @@ namespace KOLEGIO
 
         protected override void initInstance()
         {
-            listar.COLUMNAS = "IdColegiado as 'Id Colegiado', [N° Colegiado], [Cédula], Nombre, [Fecha Nacimiento], [Fecha Ingreso], Condición, Teléfono, [Correo Electrónico], [Último Cobro]";
+            listar.COLUMNAS = "IdColegiado as 'Id Colegiado', [N° Colegiado], [Cédula], Nombre, [Fecha Nacimiento], [Fecha Ingreso], Condición, Teléfono, [Correo Electrónico], [Último Cobro],[Último Cambio Condición],[Última Sesion],[Género]";
             listar.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
             listar.TABLA = "NV_COLEGIADO_INDEX";
             listar.TITULO_LISTADO = "Lista de Colegiados";
@@ -38,6 +38,7 @@ namespace KOLEGIO
             listar.COLUMNAS_FECHAS.Add("Fecha Nacimiento");
             listar.COLUMNAS_FECHAS.Add("Fecha Ingreso");
             listar.COLUMNAS_FECHAS.Add("Último Cobro");
+            listar.COLUMNAS_FECHAS.Add("Último Cambio Condición");
 
             insertar = Constantes.COLEGIADOS_INSERTAR;
             editar = Constantes.COLEGIADOS_EDITAR;

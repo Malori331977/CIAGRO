@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.40")]
-[assembly: AssemblyFileVersion("1.0.0.41")]
+[assembly: AssemblyVersion("1.0.0.43")]
+[assembly: AssemblyFileVersion("1.0.0.43")]
 //1.0.0.3--Arreglo consulta en el proceso de cobros de regencias
 //1.0.0.4--Proceso cobros masivos cobrador(90%)
 //1.0.0.5--Algunos detalles vistos en sesion 15/02/2019
@@ -73,3 +73,8 @@ using System.Runtime.InteropServices;
 //1.0.0.39--Fix error guardar establecimientos, el sistema borra categorias de los establecimientos.  Correccion en formato de gobierno
 //1.0.0.40--Fix error guardar establecimientos, al guardar el establecimiento se corrige llave foranea de pais.
 //1.0.0.41--Modificación para inhabilitar categorias en establecimientos.  Selección individual de registros en Generacion de Canones anuales.
+//1.0.0.42--Cambio 2025-08: Ajustes a lista de Colegiados en Proceso de Registro, agregar columnas de genero, fecha de ultimo cambio de condicion, ultima sesion
+//1.0.0.43--Cambio 2025-04: Ajustes varios, Realizar ajustes al sistema para contemplar las nuevas condiciones establecidas para la generación de cánones anuales,
+//          Agregar validación que permita controlar si un canon ya fue cobrado y en caso de ser así entonces que no permita volver a cobrar el canon en el mismo año,
+//          En el proceso de cambio de Condición debe alimentar la bitácora para las suspensiones que se encuentra en el registro de Colegiados,
+//          En el proceso de generación de Colegiaturas se debe validar que se esté realizando el cobro del mes actual 

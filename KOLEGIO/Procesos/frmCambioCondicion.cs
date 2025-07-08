@@ -28,8 +28,9 @@ namespace KOLEGIO
         private DataTable dtRefrescar = new DataTable();
         private FuncsInternas fInternas;
         private BindingSource source1 = new BindingSource();
+        private string Usu;
 
-        public frmCambioCondicion()
+        public frmCambioCondicion(string Usuario)
         {
             InitializeComponent();
             this.fInternas = new FuncsInternas();
@@ -40,6 +41,11 @@ namespace KOLEGIO
             dtRefrescar.Columns.Add("Nombre", typeof(String));
             dtRefrescar.Columns.Add("Estado", typeof(Image));
             dtRefrescar.Columns.Add("Observaciones", typeof(String));
+
+            txtTipoSuspension.ReadOnly = true;
+            txtTipoSuspension.Enabled = false;
+            dtpFinSuspension.Enabled = false;
+            Usu = Usuario;
         }
 
         public frmCambioCondicion(string IdColegiado, string condicionActual)
@@ -57,7 +63,8 @@ namespace KOLEGIO
             dtRefrescar.Columns.Add("Observaciones", typeof(String));
             cargarDatosColegiados(IdColegiado,condicionActual);
             verificarConfigurablesCondicion(true);
-            
+
+           
         }
 
         private void cargarDatosColegiados(string colegiado, string condicionActual)
@@ -465,6 +472,15 @@ namespace KOLEGIO
                         if (OK)
                             OK = insertarEnHistorialCondicion(row.Cells["Id Colegiado"].Value.ToString(), ref error);
 
+                        /*SI CONDICION FINAL ES SUSPENSION*/
+                        if (txtCondicionFin.Text.Equals("C-11"))
+                        {
+                            if (OK)
+                                OK = insertarEnHistorialSuspensiones(row.Cells["Id Colegiado"].Value.ToString(), ref error);
+                        }
+
+                        
+
                         if (OK)
                             OK = cambioCondicion(row.Cells["Id Colegiado"].Value.ToString()/*row.Cells["colIdColegiado"].Value.ToString()*/, txtCondicionFin.Text, dtpRegresoCondicion.Value.Date, ref error);
 
@@ -564,6 +580,40 @@ namespace KOLEGIO
             return lbOk;
         }
 
+        private bool insertarEnHistorialSuspensiones(string colegiado, ref string error)
+        {
+
+
+            List<string> parametros = new List<string>();
+            Listado list = new Listado();
+            list.COLUMNAS = "IdColegiado,TipoSuspension,NumeroResolucion,FechaInicio,FechaFinal";
+            list.COMPAÑIA = Consultas.sqlCon.COMPAÑIA;
+            list.TABLA = "NV_COLEGIADO_SUSPENSIONES";
+            bool lbOk = true;
+            try
+            {
+
+                parametros.Clear();
+                list.COLUMNAS_PK.Clear();
+                //list.COLUMNAS_PK.Add("Id");
+                list.COLUMNAS_PK.Add("IdColegiado");
+                parametros.Add(colegiado);
+                parametros.Add(txtTipoSuspension.Text);
+                parametros.Add(txtSesionApro.Text);
+                parametros.Add(dtpFechaApro.Value.ToString("yyyy-MM-ddTHH:mm:ss"));
+                parametros.Add(dtpFinSuspension.Value.ToString("yyyy-MM-ddTHH:mm:ss"));
+
+                lbOk = Consultas.insertar(parametros, list, "NV_COLEGIADO_SUSPENSIONES", ref error);
+
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return false;
+            }
+            return lbOk;
+        }
+
         //private bool cambioCondicionDetalle(string idColegiado, string condicion, ref string error)
         //{
         //    bool OK = true;
@@ -646,6 +696,22 @@ namespace KOLEGIO
                 error = "Debe digitar la condición final.";
                 txtCondicionFin.Focus();
                 OK = false;
+            }
+            else
+            {
+                if (txtCondicionFin.Text.Equals("C-11") && txtTipoSuspension.Text.Trim() == "")
+                {
+                    error = "Debe digitar el tipo de suspensión";
+                    txtTipoSuspension.Focus();
+                    OK = false;
+                }
+
+                if (txtCondicionFin.Text.Equals("C-11") && dtpFinSuspension.Value<=dtpFechaApro.Value)
+                {
+                    error = "La fecha de finalización de la suspensión debe ser mayor que la fecha de aprobación.";
+                    txtTipoSuspension.Focus();
+                    OK = false;
+                }
             }
 
             if (txtSesionApro.Text.Trim() == "")
@@ -1013,7 +1079,23 @@ namespace KOLEGIO
                 }
             }
         }
-       
+
+        private void txtCondicionFin_TextChanged(object sender, EventArgs e)
+        {
+            if (txtCondicionFin.Text.Equals("C-11"))
+            {
+                txtTipoSuspension.ReadOnly = false;
+                txtTipoSuspension.Enabled = true;
+                dtpFinSuspension.Enabled = true;
+            }
+            else
+            {
+                txtTipoSuspension.ReadOnly = true;
+                txtTipoSuspension.Enabled = false;
+                dtpFinSuspension.Enabled = false;
+            }
+        }
+
         private void txtFiltro_TextChanged(object sender, EventArgs e)
         {
             if (!txtCondicionIni.Text.Equals(""))
