@@ -126,95 +126,108 @@ namespace KOLEGIO
                 string sSelectCl = "";
                 DataTable dtAplicaClie = new DataTable();
                 DateTime fechaActu = DateTime.Now;
+                DateTime fechaMesAnterior = DateTime.Now;
                 DateTime fechaDgv = DateTime.Now;
                 DateTime mesCobro = DateTime.Now;
-                fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, /*DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Day*/ 25);
-                if(!row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
+                DateTime mesAnteriorCobro = DateTime.Now.AddMonths(-1);
+                fechaActu = new DateTime(fechaActu.Year, fechaActu.Month, 25);
+                fechaMesAnterior = new DateTime(mesAnteriorCobro.Year, mesAnteriorCobro.Month, 25);
+                if (!row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
                     fechaDgv = new DateTime(DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Year, DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).Month,  25);
                 else
                     fechaDgv = new DateTime(1900, 01, 25);
                 //if (row.Cells["colUltimoCobro"].Value.ToString().Equals("") || DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()) < fechaActu)
                 if (row.Cells["colUltimoCobro"].Value.ToString().Equals("") || fechaDgv < fechaActu)
                 {
-                    try
+                    if (fechaDgv == fechaMesAnterior)
                     {
-                        Consultas.sqlCon.iniciaTransaccion();
-
-                        
-                        //sSelect = "select AplicaClienteErp from "+ Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla = (select distinct CodigoPlantilla from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES_COLEGIADO where NumeroColegiado = '"+ row.Cells["colNumeroColegiado"].Value.ToString() + "') and AplicaClienteErp = 'S'";
-                        
-                        sSelect = "select t3.AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1 join " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t2 on t2.CodigoCondicion = t1.Condicion" +
-                            " join " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES t3 on t3.CodigoPlantilla = t2.CodigoPlantilla where t1.IdColegiado = '" + row.Cells["colIdColegiado"].Value.ToString() + "'";
-                        OK = Consultas.fillDataTable(sSelect, ref dtAplicaClie, ref error);
-                        
-
-                        if (OK)
+                        try
                         {
-                            sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".CLIENTE where CLIENTE = '" + row.Cells["colIdColegiado"].Value.ToString() + "'";
-                            OK = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
+                            Consultas.sqlCon.iniciaTransaccion();
 
-                        }
 
-                        if (OK && dtAplicaClie.Rows.Count > 0 && dtCliente.Rows.Count == 0)
-                        {
+                            //sSelect = "select AplicaClienteErp from "+ Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES where CodigoPlantilla = (select distinct CodigoPlantilla from " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES_COLEGIADO where NumeroColegiado = '"+ row.Cells["colNumeroColegiado"].Value.ToString() + "') and AplicaClienteErp = 'S'";
 
-                            OK = fInternas.generarNit(row.Cells["colCedula"].Value.ToString(), row.Cells["colIdColegiado"].Value.ToString(), ref dtCliente, "colegiado", ref error);
+                            sSelect = "select t3.AplicaClienteErp from " + Consultas.sqlCon.COMPAÑIA + ".NV_COLEGIADO t1 join " + Consultas.sqlCon.COMPAÑIA + ".NV_CONDICIONES t2 on t2.CodigoCondicion = t1.Condicion" +
+                                " join " + Consultas.sqlCon.COMPAÑIA + ".NV_MACHOTES t3 on t3.CodigoPlantilla = t2.CodigoPlantilla where t1.IdColegiado = '" + row.Cells["colIdColegiado"].Value.ToString() + "'";
+                            OK = Consultas.fillDataTable(sSelect, ref dtAplicaClie, ref error);
+
 
                             if (OK)
-                                OK = fInternas.generarCliente(row.Cells["colIdColegiado"].Value.ToString(), ref dtCliente, "colegiado", "C", ref error);
-
-                        }
-
-                        if(OK)
-                            OK = fInternas.verificarAceptaDocElectronicoClienteERP(row.Cells["colIdColegiado"].Value.ToString(), ref error);
-
-
-                        if (OK)
-                        {
-                            if (row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
                             {
-                                mesCobro = new DateTime(mesCobro.Year, mesCobro.Month, /*mesCobro.Day*/ 25);
+                                sSelectCl = "select * from " + Consultas.sqlCon.COMPAÑIA + ".CLIENTE where CLIENTE = '" + row.Cells["colIdColegiado"].Value.ToString() + "'";
+                                OK = Consultas.fillDataTable(sSelectCl, ref dtCliente, ref error);
+
+                            }
+
+                            if (OK && dtAplicaClie.Rows.Count > 0 && dtCliente.Rows.Count == 0)
+                            {
+
+                                OK = fInternas.generarNit(row.Cells["colCedula"].Value.ToString(), row.Cells["colIdColegiado"].Value.ToString(), ref dtCliente, "colegiado", ref error);
+
+                                if (OK)
+                                    OK = fInternas.generarCliente(row.Cells["colIdColegiado"].Value.ToString(), ref dtCliente, "colegiado", "C", ref error);
+
+                            }
+
+                            if (OK)
+                                OK = fInternas.verificarAceptaDocElectronicoClienteERP(row.Cells["colIdColegiado"].Value.ToString(), ref error);
+
+
+                            if (OK)
+                            {
+                                if (row.Cells["colUltimoCobro"].Value.ToString().Equals(""))
+                                {
+                                    mesCobro = new DateTime(mesCobro.Year, mesCobro.Month, /*mesCobro.Day*/ 25);
+                                }
+                                else
+                                {
+                                    DateTime ActualizarCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString());
+                                    mesCobro = new DateTime(ActualizarCobro.Year, ActualizarCobro.Month,/*mesCobro.Day*/ 25).AddMonths(1);
+                                    //mesUltCobro = mesUltCobro.AddMonths(1);
+                                }
+                                //mesCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).AddMonths(1);
+                                OK = generarPedido(row.Cells["colIdColegiado"].Value.ToString(), dtCliente, row.Cells["colCobradorCole"].Value.ToString(), mesCobro.ToString("MM/yyyy"), ref error);
+                            }
+
+                            if (OK)
+                                OK = actualizarUltMesCobro(row.Cells["colIdColegiado"].Value.ToString(), mesCobro, ref error);
+
+                            //if (OK && aceptabaDoc)//Se actualiza check a S porque se verifica al inicio si esta chequeado 
+                            //    controlerBD.actualizarAceptaDocElectronicoClienteERP(row.Cells["colIdColegiado"].Value.ToString(),"S",ref error);
+
+                            if (OK)
+                            {
+                                Consultas.sqlCon.Commit();
+                                totalRegistrosExitosos += 1;
+                                row.Cells["colResultado"].Value = iList.Images[2];
+                                row.Cells["colObservaciones"].Value = "¡Proceso exitoso!";
+                                actualizarMesCobro(row.Cells["colIdColegiado"].Value.ToString(), mesCobro.ToString("MM/yyyy"));
                             }
                             else
                             {
-                                DateTime ActualizarCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString());
-                                mesCobro = new DateTime(ActualizarCobro.Year, ActualizarCobro.Month,/*mesCobro.Day*/ 25).AddMonths(1);
-                                //mesUltCobro = mesUltCobro.AddMonths(1);
+                                Consultas.sqlCon.Rollback();
+                                totalRegistrosErroneos += 1;
+                                row.Cells["colResultado"].Value = iList.Images[1];
+                                row.Cells["colObservaciones"].Value = error;
+
                             }
-                            //mesCobro = DateTime.Parse(row.Cells["colUltimoCobro"].Value.ToString()).AddMonths(1);
-                            OK = generarPedido(row.Cells["colIdColegiado"].Value.ToString(), dtCliente, row.Cells["colCobradorCole"].Value.ToString(), mesCobro.ToString("MM/yyyy"), ref error);
+
                         }
-
-                        if (OK)
-                            OK = actualizarUltMesCobro(row.Cells["colIdColegiado"].Value.ToString(), mesCobro, ref error);
-
-                        //if (OK && aceptabaDoc)//Se actualiza check a S porque se verifica al inicio si esta chequeado 
-                        //    controlerBD.actualizarAceptaDocElectronicoClienteERP(row.Cells["colIdColegiado"].Value.ToString(),"S",ref error);
-
-                        if (OK)
-                        {
-                            Consultas.sqlCon.Commit();
-                            totalRegistrosExitosos += 1;
-                            row.Cells["colResultado"].Value = iList.Images[2];
-                            row.Cells["colObservaciones"].Value = "¡Proceso exitoso!";
-                            actualizarMesCobro(row.Cells["colIdColegiado"].Value.ToString(), mesCobro.ToString("MM/yyyy"));
-                        }
-                        else
+                        catch (Exception ex)
                         {
                             Consultas.sqlCon.Rollback();
-                            totalRegistrosErroneos += 1;
                             row.Cells["colResultado"].Value = iList.Images[1];
-                            row.Cells["colObservaciones"].Value = error;
-
+                            row.Cells["colObservaciones"].Value = ex.Message;
                         }
-
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Consultas.sqlCon.Rollback();
-                        row.Cells["colResultado"].Value = iList.Images[1];
-                        row.Cells["colObservaciones"].Value = ex.Message;
+                        totalRegistrosErroneos += 1;
+                        row.Cells["colResultado"].Value = iList.Images[3];
+                        row.Cells["colObservaciones"].Value = "El último cobro no corresponde al mes anterior.";
                     }
+                    
                 }
                 else
                 {
